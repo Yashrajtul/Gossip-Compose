@@ -1,4 +1,4 @@
-package com.example.gossip.screens
+package com.example.gossip.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gossip.R
+import com.example.gossip.screens.ButtonComponent
+import com.example.gossip.screens.CheckboxComponent
+import com.example.gossip.screens.ClickableLoginTextComponent
+import com.example.gossip.screens.DividerTextComponent
+import com.example.gossip.screens.HeadingTextComponent
+import com.example.gossip.screens.MyTextField
+import com.example.gossip.screens.NormalTextComponent
+import com.example.gossip.screens.PasswordTextField
 
 
 @Composable
