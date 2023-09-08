@@ -1,4 +1,4 @@
-package com.example.gossip.screens
+package com.example.gossip.ui
 
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
