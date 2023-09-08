@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.gossip.R
 import kotlinx.coroutines.delay
 
+
 @Composable
 fun SplashScreen(mainScreen: () -> Unit) {
     val scale = remember {
@@ -32,7 +33,7 @@ fun SplashScreen(mainScreen: () -> Unit) {
             )
         )
         delay(3000L)
-        mainScreen()
+
     }
     Box(
         contentAlignment = Alignment.Center,
@@ -45,3 +46,4 @@ fun SplashScreen(mainScreen: () -> Unit) {
         )
     }
 }
+

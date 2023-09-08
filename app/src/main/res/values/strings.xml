@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Gossip</string>
-</resources>
+
+
+        <string name="hello">Hey there,</string>
+        <string name="create_account">Create an Account</string>
+        <string name="welcome">Welcome Back</string>
+
+        <string name="first_name">First Name</string>
+        <string name="last_name">Last Name</string>
+        <string name="email"> Email</string>
+        <string name="password"> Password</string>
+        <string name="hide_password"> Hide Password</string>
+        <string name="show_password"> Show Password</string>
+        <string name="terms_conditions"> By continuing you accept our Privacy Policy and Terms of Use</string>
+        <string name="terms_header">Terms Of Use</string>
+        <string name="register">Register</string>
+        <string name="or">Or</string>
+        <string name="have_account">Already have an Account? </string>
+        <string name="login">Login</string>
+        <string name="forgot_password">Forgot your password</string>
+
+    </resources>
+
