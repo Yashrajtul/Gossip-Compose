@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gossip.ui.MainScreen
-import com.example.gossip.ui.SplashScreen
+import com.example.gossip.screens.MainScreen
+import com.example.gossip.screens.SplashScreen
 import com.example.gossip.ui.theme.GossipTheme
 
 class MainActivity : ComponentActivity() {
@@ -51,8 +51,8 @@ fun Navigation(context: Context, onClick: (name: String) -> Unit) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "splash_screen") {
         composable("splash_screen") {
-            SplashScreen{
-                navController.navigate("main_screen"){popUpTo(0)}
+            SplashScreen {
+                navController.navigate("main_screen") { popUpTo(0) }
             }
         }
         composable("main_screen") {
