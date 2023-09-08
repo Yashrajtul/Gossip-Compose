@@ -33,7 +33,7 @@ fun SplashScreen(mainScreen: () -> Unit) {
             )
         )
         delay(3000L)
-
+        mainScreen()
     }
     Box(
         contentAlignment = Alignment.Center,
