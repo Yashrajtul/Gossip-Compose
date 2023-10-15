@@ -26,27 +26,31 @@ import com.example.gossip.screens.UnderLinedTextComponent
 
 
 @Composable
-fun LoginScreen(){
+fun LoginScreen() {
     Surface(
-        color= Color.White,
-        modifier= Modifier
+        color = Color.White,
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .padding(28.dp)
 
-    ){
-        Column(modifier = Modifier
-            .fillMaxSize()) {
-
-
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             NormalTextComponent(value = stringResource(id = R.string.login))
             HeadingTextComponent(value = stringResource(id = R.string.welcome))
             Spacer(modifier = Modifier.height(20.dp))
-            MyTextField(labelValue = stringResource(id = R.string.email) ,
-                painterResource (id=R.drawable.baseline_email_24 ))
+            MyTextField(
+                labelValue = stringResource(id = R.string.email),
+                painterResource(id = R.drawable.baseline_email_24)
+            )
             PasswordTextField(
-                labelValue = stringResource(id = R.string.password), painterResource = painterResource(
-                    id = R.drawable.baseline_lock_24)
+                labelValue = stringResource(id = R.string.password),
+                painterResource = painterResource(
+                    id = R.drawable.baseline_lock_24
+                )
             )
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -55,22 +59,18 @@ fun LoginScreen(){
             ButtonComponent(value = stringResource(id = R.string.login))
             Spacer(modifier = Modifier.height(40.dp))
             DividerTextComponent()
-            ClickableLoginTextComponent( tryingToLogin = false,onTextSelected = {
-               // GossipAppRouter.navigateTo(Screen.SignupScreen)
+            ClickableLoginTextComponent(tryingToLogin = false, onTextSelected = {
+                // GossipAppRouter.navigateTo(Screen.SignupScreen)
             })
-
-
-
-
         }
-
     }
     //SystemBackButtonHandler {
-     //   GossipAppRouter.navigateTo(Screen.SignupScreen)
-   // }
+    //   GossipAppRouter.navigateTo(Screen.SignupScreen)
+    // }
 }
+
 @Preview
 @Composable
-fun LoginScreenPreview(){
+fun LoginScreenPreview() {
     LoginScreen()
 }

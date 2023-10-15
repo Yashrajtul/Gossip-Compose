@@ -24,40 +24,40 @@ import com.example.gossip.screens.MyTextField
 import com.example.gossip.screens.NormalTextComponent
 import com.example.gossip.screens.PasswordTextField
 
-
 @Composable
-fun SignupScreen(){
+fun SignupScreen() {
     Surface(
-        color= Color.White,
-        modifier= Modifier
+        color = Color.White,
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .padding(28.dp)
-
-    )
-    {
-        Column(modifier=Modifier.fillMaxSize()) {
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
             NormalTextComponent(value = stringResource(id = R.string.hello))
             HeadingTextComponent(value = stringResource(id = R.string.create_account))
-            Spacer(modifier=Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             MyTextField(
                 labelValue = stringResource(id = R.string.first_name),
                 painterResource(id = R.drawable.baseline_person_24)
             )
             MyTextField(
                 labelValue = stringResource(id = R.string.last_name),
-                painterResource(id = R.drawable.baseline_person_24))
+                painterResource(id = R.drawable.baseline_person_24)
+            )
             MyTextField(
                 labelValue = stringResource(id = R.string.email),
-                painterResource(id = R.drawable.baseline_email_24))
-
+                painterResource(id = R.drawable.baseline_email_24)
+            )
             PasswordTextField(
-                labelValue = stringResource(id = R.string.password), painterResource = painterResource(
-                    id = R.drawable.baseline_lock_24)
+                labelValue = stringResource(id = R.string.password),
+                painterResource = painterResource(
+                    id = R.drawable.baseline_lock_24
+                )
             )
             CheckboxComponent(value = stringResource(id = R.string.terms_conditions),
                 onTextSelected = {
-                  //  GossipAppRouter.navigateTo(Screen.TermsAndConditionsScreens)
+                    //  GossipAppRouter.navigateTo(Screen.TermsAndConditionsScreens)
 
                 })
             Spacer(modifier = Modifier.height(40.dp))
@@ -66,23 +66,16 @@ fun SignupScreen(){
 
             DividerTextComponent()
             Spacer(modifier = Modifier.height(30.dp))
-            ClickableLoginTextComponent(tryingToLogin = true,onTextSelected = {
+            ClickableLoginTextComponent(tryingToLogin = true, onTextSelected = {
                 //GossipAppRouter.navigateTo(Screen.LoginScreen)
 
             })
-
-
-
-
-
         }
-
     }
-
 }
+
 @Preview
 @Composable
-fun DefaultPreviewOfSignupScreen(){
+fun DefaultPreviewOfSignupScreen() {
     SignupScreen()
-
 }

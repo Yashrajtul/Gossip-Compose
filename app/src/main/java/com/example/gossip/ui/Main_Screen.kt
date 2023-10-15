@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -33,14 +34,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import com.example.gossip.R
+import com.example.gossip.data.Datasource.chats
+import com.example.gossip.model.Chat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(context: Context, onClick: (name: String) -> Unit) {
+fun MainScreen(context: Context = LocalContext.current, onClick: (name: String) -> Unit) {
     var showMenu by remember { mutableStateOf(false) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -117,7 +120,7 @@ fun MainScreen(context: Context, onClick: (name: String) -> Unit) {
             )
         }
     ) {
-        MainChats(modifier = Modifier.padding(it), onClick)
+        MainChats(modifier = Modifier.padding(it), onClick = onClick)
     }
 }
 
@@ -125,45 +128,47 @@ fun MainScreen(context: Context, onClick: (name: String) -> Unit) {
 @Composable
 fun MainChats(
     modifier: Modifier,
+    chat : List<Chat> = chats,
     onClick: (name: String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(100) {
-            ChatUnit(text = it.toString(), onClick)
+        items(chat){
+            ChatUnit(it, onClick)
         }
     }
 }
 
 @Composable
 fun ChatUnit(
-    text: String,
+    chat : Chat,
+//    text: String,
     onClick: (name: String) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
+            .height(90.dp)
             .clickable {
-                onClick(text)
+                onClick(chat.name)
             }
     ) {
-        Spacer(modifier = Modifier.padding(4.dp))
+        Spacer(modifier = Modifier.padding(6.dp))
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
+            painter = painterResource(id = chat.image),
             contentDescription = "",
             modifier = Modifier
                 .clip(CircleShape)
-                .fillMaxHeight(.9f)
+                .fillMaxHeight(.75f)
                 .clickable {
 
                 }
         )
         Spacer(modifier = Modifier.padding(4.dp))
-        Text(text = text)
+        Text(text = chat.name)
     }
 }
 

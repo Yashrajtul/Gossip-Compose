@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.example.gossip.MessageActivity
 import com.example.gossip.R
+import com.example.gossip.data.Datasource
+import com.example.gossip.model.Message
 
 //class MessageActivity : ComponentActivity(){
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,9 +86,7 @@ fun MessageTopAppBar(activity: MessageActivity, name: String) {
     var showMenu by remember { mutableStateOf(false) }
     TopAppBar(
         title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_launcher_background),
                     contentDescription = "",
@@ -99,21 +99,13 @@ fun MessageTopAppBar(activity: MessageActivity, name: String) {
             }
         },
         navigationIcon = {
-            IconButton(onClick = {
-                activity.finish()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Go Back"
-                )
+            IconButton(onClick = { activity.finish() }) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Go Back")
             }
         },
         actions = {
             IconButton(onClick = { showMenu = !showMenu }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "Menu"
-                )
+                Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu")
             }
             DropdownMenu(
                 expanded = showMenu,
@@ -121,9 +113,7 @@ fun MessageTopAppBar(activity: MessageActivity, name: String) {
                 properties = PopupProperties(focusable = true)
             ) {
 
-                DropdownMenuItem(text = {
-                    Text(text = "Clear Chats")
-                }, onClick = {
+                DropdownMenuItem(text = { Text(text = "Clear Chats") }, onClick = {
                     showMenu = false
                 })
             }
@@ -227,7 +217,10 @@ fun MessageBottomAppBar1() {
 }
 
 @Composable
-fun MessageContent(modifier: Modifier) {
+fun MessageContent(
+    modifier: Modifier = Modifier,
+    message : List<Message> = Datasource.messages
+) {
     LazyColumn(
         modifier = modifier
     ) {
@@ -256,7 +249,7 @@ fun Message(it: Int) {
                 modifier = Modifier
                     .padding(8.dp)
                     .wrapContentSize()
-                    .widthIn(max = (LocalConfiguration.current.screenWidthDp*.8).dp)
+                    .widthIn(max = (LocalConfiguration.current.screenWidthDp * .8).dp)
             ) {
                 Box(
                     contentAlignment = Alignment.BottomEnd,

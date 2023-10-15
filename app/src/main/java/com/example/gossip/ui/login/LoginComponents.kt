@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gossip.R
@@ -58,9 +60,10 @@ import com.example.gossip.ui.theme.componentShapes
 
 
 @Composable
-fun NormalTextComponent(value:String){
-    Text(text = value,
-        modifier = Modifier
+fun NormalTextComponent(value: String, modifier: Modifier = Modifier) {
+    Text(
+        text = value,
+        modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 40.dp),
         style = TextStyle(
@@ -68,16 +71,22 @@ fun NormalTextComponent(value:String){
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal
         ),
-        color= TextColor,
+        color = TextColor,
         textAlign = TextAlign.Center
     )
-
-
 }
+
+@Preview(showBackground = true)
 @Composable
-fun HeadingTextComponent(value:String){
-    Text(text = value,
-        modifier = Modifier
+fun NormalTextComponentPreview() {
+    NormalTextComponent(value = "Hello")
+}
+
+@Composable
+fun HeadingTextComponent(value: String, modifier: Modifier = Modifier) {
+    Text(
+        text = value,
+        modifier = modifier
             .fillMaxWidth()
             .heightIn(),
         style = TextStyle(
@@ -85,223 +94,280 @@ fun HeadingTextComponent(value:String){
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal
         ),
-        color= TextColor,
+        color = TextColor,
         textAlign = TextAlign.Center
-
-
-
-
     )
-
-
 }
+
+@Preview(showBackground = true)
+@Composable
+fun HeadingTextComponentPreview() {
+    HeadingTextComponent(value = "Hello")
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTextField(labelValue: String,painterResource: Painter){
-    val textValue=remember{
+fun MyTextField(labelValue: String, painterResource: Painter, modifier: Modifier = Modifier) {
+    val textValue = remember {
         mutableStateOf(value = "")
     }
     OutlinedTextField(
-        modifier= Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clip(componentShapes.small),label={Text(text=labelValue)},
-        colors= TextFieldDefaults.outlinedTextFieldColors(
+            .clip(componentShapes.small),
+        label = { Text(text = labelValue) },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Primary,
             focusedLabelColor = Primary,
             cursorColor = Primary
-        ), keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        ),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         singleLine = true,
         maxLines = 1,
-        value=textValue.value,
-        onValueChange ={
-            textValue.value= it},
-        leadingIcon = {
-            Icon(painter = painterResource, contentDescription ="" )
+        value = textValue.value,
+        onValueChange = {
+            textValue.value = it
         },
-
-        )
+        leadingIcon = {
+            Icon(painter = painterResource, contentDescription = "")
+        }
+    )
 }
+
+@Preview(showBackground = true)
+@Composable
+fun MyTextFieldPreview() {
+    MyTextField("Enter Email", painterResource(id = R.drawable.baseline_email_24))
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordTextField(labelValue: String,painterResource:Painter){
-    val localFocusManager= LocalFocusManager.current
-    val password=remember{
+fun PasswordTextField(labelValue: String, painterResource: Painter, modifier: Modifier = Modifier) {
+    val localFocusManager = LocalFocusManager.current
+    val password = remember {
         mutableStateOf(value = "")
     }
-    val passwordVisible= remember {
+    val passwordVisible = remember {
         mutableStateOf(false)
-
     }
     OutlinedTextField(
-        modifier= Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clip(componentShapes.small),label={Text(text=labelValue)},
-        colors=TextFieldDefaults.outlinedTextFieldColors(
+            .clip(componentShapes.small),
+        label = { Text(text = labelValue) },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Primary,
             focusedLabelColor = Primary,
             cursorColor = Primary
-        ), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done ),
-        singleLine=true,
-        maxLines=1,
-        keyboardActions= KeyboardActions{
+        ),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        maxLines = 1,
+        keyboardActions = KeyboardActions {
             localFocusManager.clearFocus()
-
         },
-
-        value=password.value,
-        onValueChange ={
-
-            password.value= it},
+        value = password.value,
+        onValueChange = {
+            password.value = it
+        },
         leadingIcon = {
-            Icon(painter = painterResource, contentDescription ="" )
-
+            Icon(painter = painterResource, contentDescription = "")
         },
         trailingIcon = {
-            val iconImage=if(passwordVisible.value){
+            val iconImage = if (passwordVisible.value) {
                 Icons.Filled.Visibility
-
-            }
-            else{
+            } else {
                 Icons.Filled.VisibilityOff
             }
-            var description=if(passwordVisible.value){
+            var description = if (passwordVisible.value) {
                 stringResource(id = R.string.hide_password)
-            }
-            else{
+            } else {
                 stringResource(id = R.string.show_password)
             }
-            IconButton(onClick ={passwordVisible.value=!passwordVisible.value}) {
-                Icon(imageVector = iconImage, contentDescription =description )
+            IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
+                Icon(imageVector = iconImage, contentDescription = description)
             }
-
         },
-        visualTransformation = if(passwordVisible.value) VisualTransformation.None else
+        visualTransformation = if (passwordVisible.value) VisualTransformation.None else
             PasswordVisualTransformation()
-
     )
 }
-@Composable
-fun CheckboxComponent(value: String,onTextSelected: (String) -> Unit){
-    Row(modifier= Modifier
-        .fillMaxWidth()
-        .heightIn(56.dp),
 
+@Preview(showBackground = true)
+@Composable
+fun PasswordTextFieldPreview() {
+    PasswordTextField("Enter Password", painterResource(id = R.drawable.baseline_lock_24))
+}
+
+@Composable
+fun CheckboxComponent(
+    value: String,
+    onTextSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(56.dp),
         verticalAlignment = Alignment.CenterVertically,
-    ){
-        val checkedState= remember {
+    ) {
+        val checkedState = remember {
             mutableStateOf(false)
         }
-        Checkbox(checked =checkedState.value , onCheckedChange ={
-            checkedState.value!= checkedState.value
-
-        } )
-        ClickableTextComponent(value=value,onTextSelected)
+        Checkbox(checked = checkedState.value, onCheckedChange = {
+            checkedState.value != checkedState.value
+        })
+        ClickableTextComponent(value = value, onTextSelected)
     }
 }
+
+@Preview(showBackground = true)
 @Composable
-fun ClickableTextComponent(value: String,onTextSelected:(String) ->Unit){
-    val initialText="By continuing you accept our "
-    val privacyPolicyText="Privacy Policy "
-    val andText=" and "
-    val termsAndConditionsText="Terms Of Use"
-    val annotatedString= buildAnnotatedString {
+fun CheckboxComponentPreview() {
+    CheckboxComponent(
+        "Option1",
+        onTextSelected = { }
+    )
+}
+
+@Composable
+fun ClickableTextComponent(value: String, onTextSelected: (String) -> Unit) {
+    val initialText = "By continuing you accept our "
+    val privacyPolicyText = "Privacy Policy "
+    val andText = " and "
+    val termsAndConditionsText = "Terms Of Use"
+    val annotatedString = buildAnnotatedString {
         append(initialText)
-        withStyle(style = SpanStyle(color = Primary)){
-            pushStringAnnotation(tag=privacyPolicyText, annotation = privacyPolicyText)
+        withStyle(style = SpanStyle(color = Primary)) {
+            pushStringAnnotation(tag = privacyPolicyText, annotation = privacyPolicyText)
             append(privacyPolicyText)
         }
         append(andText)
-        withStyle(style = SpanStyle(color = Primary)){
-            pushStringAnnotation(tag=termsAndConditionsText, annotation = termsAndConditionsText)
+        withStyle(style = SpanStyle(color = Primary)) {
+            pushStringAnnotation(tag = termsAndConditionsText, annotation = termsAndConditionsText)
             append(termsAndConditionsText)
         }
-
-
     }
-    ClickableText(text = annotatedString, onClick = {offset->
-        annotatedString.getStringAnnotations(offset,offset)
-            .firstOrNull()?.also { span->
-                Log.d("ClickableTextComponent","{$span}")
-                if((span.item == termsAndConditionsText) || (span.item==privacyPolicyText)){
+    ClickableText(text = annotatedString, onClick = { offset ->
+        annotatedString.getStringAnnotations(offset, offset)
+            .firstOrNull()?.also { span ->
+                Log.d("ClickableTextComponent", "{$span}")
+                if ((span.item == termsAndConditionsText) || (span.item == privacyPolicyText)) {
                     onTextSelected(span.item)
                 }
             }
-
-
     })
 }
+
+@Preview(showBackground = true)
 @Composable
-fun ButtonComponent(value:String){
-    Button(onClick = { /*TODO*/ },
+fun ClickableTextComponentPreview() {
+    ClickableTextComponent(
+        "Option1",
+        onTextSelected = { }
+    )
+}
+
+@Composable
+fun ButtonComponent(value: String) {
+    Button(
+        onClick = { /*TODO*/ },
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp),
         contentPadding = PaddingValues(),
         colors = ButtonDefaults.buttonColors(Color.Transparent)
     ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(48.dp)
-            .background(
-                brush = Brush.horizontalGradient(listOf(Secondary, Primary)),
-                shape = RoundedCornerShape(10.dp)
-
-            ),
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(48.dp)
+                .background(
+                    brush = Brush.horizontalGradient(listOf(Secondary, Primary)),
+                    shape = RoundedCornerShape(10.dp)
+                ),
             contentAlignment = Alignment.Center
-        ){
-            Text(text = value,
+        ) {
+            Text(
+                text = value,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold)
+                fontWeight = FontWeight.Bold
+            )
         }
-
-
     }
 }
+
+@Preview(showBackground = true)
 @Composable
-fun DividerTextComponent(){
-    Row(modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically){
-        Divider(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f),
-            color=Color.Gray,
-            thickness = 1.dp)
-        Text(text = stringResource(id = R.string.or),
+fun ButtonComponentPreview() {
+    ButtonComponent("Open")
+}
+
+@Composable
+fun DividerTextComponent() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            color = Color.Gray,
+            thickness = 1.dp
+        )
+        Text(
+            text = stringResource(id = R.string.or),
             modifier = Modifier.padding(8.dp),
             fontSize = 18.sp,
-            color= TextColor)
-        Divider(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f),
-            color=Color.Gray,
-            thickness = 1.dp)
-
-
+            color = TextColor
+        )
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            color = Color.Gray,
+            thickness = 1.dp
+        )
     }
 }
-@Composable
-fun ClickableLoginTextComponent(tryingToLogin:Boolean=true,onTextSelected:(String) ->Unit){
-    val initialText=if(tryingToLogin) "Already have an Account? " else "Don't have an account yet? "
-    val loginText=if (tryingToLogin)"Login " else "Register"
 
-    val annotatedString= buildAnnotatedString {
+@Preview(showBackground = true)
+@Composable
+fun DividerTextComponentPreview() {
+    DividerTextComponent()
+}
+
+@Composable
+fun ClickableLoginTextComponent(
+    tryingToLogin: Boolean = true,
+    onTextSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val initialText =
+        if (tryingToLogin) "Already have an Account? " else "Don't have an account yet? "
+    val loginText = if (tryingToLogin) "Login " else "Register"
+
+    val annotatedString = buildAnnotatedString {
         append(initialText)
-        withStyle(style = SpanStyle(color = Primary)){
-            pushStringAnnotation(tag=loginText, annotation = loginText)
+        withStyle(style = SpanStyle(color = Primary)) {
+            pushStringAnnotation(tag = loginText, annotation = loginText)
             append(loginText)
         }
-
-
-
     }
-    ClickableText(modifier = Modifier
-        .fillMaxWidth()
-        .heightIn(min = 40.dp),
+    ClickableText(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 40.dp),
         style = TextStyle(
             fontSize = 20.sp,
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal,
-            textAlign = TextAlign.Center),text = annotatedString, onClick = { offset ->
+            textAlign = TextAlign.Center
+        ), text = annotatedString, onClick = { offset ->
             annotatedString.getStringAnnotations(offset, offset)
                 .firstOrNull()?.also { span ->
                     Log.d("ClickableTextComponent", "{$span}")
@@ -309,12 +375,20 @@ fun ClickableLoginTextComponent(tryingToLogin:Boolean=true,onTextSelected:(Strin
                         onTextSelected(span.item)
                     }
                 }
-        })}
+        })
+}
+
+@Preview(showBackground = true)
 @Composable
-fun UnderLinedTextComponent(value:String){
+fun ClickableLoginTextComponentPreview() {
+    ClickableLoginTextComponent(true, onTextSelected = { })
+}
+
+@Composable
+fun UnderLinedTextComponent(value: String, modifier: Modifier = Modifier) {
     Text(
-        text=value,
-        modifier=Modifier
+        text = value,
+        modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 40.dp),
         style = TextStyle(
@@ -322,18 +396,14 @@ fun UnderLinedTextComponent(value:String){
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal
         ),
-        color= Color.Gray,
+        color = Color.Gray,
         textAlign = TextAlign.Center,
         textDecoration = TextDecoration.Underline
-
-
-
     )
 }
 
-
-
-
-
-
-
+@Preview(showBackground = true)
+@Composable
+fun UnderLinedTextComponentPreview() {
+    UnderLinedTextComponent("Hello")
+}

@@ -9,11 +9,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gossip.screens.MainScreen
-import com.example.gossip.screens.SplashScreen
+import com.example.gossip.ui.MainScreen
+import com.example.gossip.ui.SplashScreen
 import com.example.gossip.ui.theme.GossipTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFF202020)
                 ) {
-                    Navigation(this) {
+                    Navigation() {
                         startActivity(MessageActivity.getIntent(this, it))
                     }
                 }
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
 //}
 
 @Composable
-fun Navigation(context: Context, onClick: (name: String) -> Unit) {
+fun Navigation(context: Context = LocalContext.current, onClick: (name: String) -> Unit) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "splash_screen") {
         composable("splash_screen") {
