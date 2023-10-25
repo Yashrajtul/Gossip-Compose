@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,10 +14,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gossip.firebaseauth.screens.PhoneAuthScreen
 import com.example.gossip.ui.MainScreen
 import com.example.gossip.ui.SplashScreen
 import com.example.gossip.ui.theme.GossipTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,11 +29,15 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFF202020)
+//                    color = Color(0xFF202020)
                 ) {
-                    Navigation() {
-                        startActivity(MessageActivity.getIntent(this, it))
-                    }
+//                    Navigation() {
+//                        startActivity(MessageActivity.getIntent(this, it))
+//                    }
+
+                    PhoneAuthScreen(
+                        activity = this
+                    )
                 }
             }
         }

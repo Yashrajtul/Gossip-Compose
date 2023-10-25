@@ -27,7 +27,6 @@ class AuthRepositoryImpl @Inject constructor(
 
             override fun onVerificationFailed(p0: FirebaseException) {
                 trySend(ResultState.Failure(p0))
-
             }
 
             override fun onCodeSent(verificationCode: String, p1: PhoneAuthProvider.ForceResendingToken) {
@@ -55,8 +54,11 @@ class AuthRepositoryImpl @Inject constructor(
         val credential = PhoneAuthProvider.getCredential(mVerificationCode, otp)
         authdb.signInWithCredential(credential)
             .addOnCompleteListener {
-                if(it.isSuccessful)
+                if(it.isSuccessful){
                     trySend(ResultState.Success("OTP Verified"))
+                    println(it.result.additionalUserInfo?.username)
+                    println(it.result.user?.phoneNumber)
+                }
             }
             .addOnFailureListener {
                 trySend(ResultState.Failure(it))
@@ -64,5 +66,9 @@ class AuthRepositoryImpl @Inject constructor(
         awaitClose {
             close()
         }
+    }
+
+    override fun currentUser(): String{
+        return authdb.currentUser?.uid ?: ""
     }
 }

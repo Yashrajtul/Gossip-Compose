@@ -14,4 +14,6 @@ interface AuthRepository {
     fun signWithCredential(
         otp: String
     ):Flow<ResultState<String>>
+
+    fun currentUser():String
 }

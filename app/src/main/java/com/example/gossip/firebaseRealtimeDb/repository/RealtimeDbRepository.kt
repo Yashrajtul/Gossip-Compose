@@ -19,6 +19,7 @@ class RealtimeDbRepository @Inject constructor(
             trySend(ResultState.Loading)
 
 
+
             awaitClose {
                 close()
             }

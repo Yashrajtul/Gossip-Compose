@@ -9,13 +9,15 @@ interface RealtimeRepository {
         user: RealtimeModelResponse.User
     ): Flow<ResultState<String>>
 
-    fun getUser() : Flow<ResultState<List<RealtimeModelResponse>>>
+    fun getUser(): Flow<ResultState<List<RealtimeModelResponse>>>
 
     fun delete(
         key: String
-    ) : Flow<ResultState<String>>
+    ): Flow<ResultState<String>>
 
     fun updateUser(
         res: RealtimeModelResponse
-    ) : Flow<ResultState<String>>
+    ): Flow<ResultState<String>>
+
+
 }

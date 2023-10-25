@@ -4,6 +4,8 @@ import com.example.gossip.firebaseRealtimeDb.repository.RealtimeDbRepository
 import com.example.gossip.firebaseRealtimeDb.repository.RealtimeRepository
 import com.example.gossip.firebaseauth.repository.AuthRepository
 import com.example.gossip.firebaseauth.repository.AuthRepositoryImpl
+import com.example.gossip.firestoredb.repository.FirestoreDbRepositoryImpl
+import com.example.gossip.firestoredb.repository.FirestoreRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,10 +17,15 @@ abstract class RepositoryModule {
     @Binds
     abstract fun providesRealtimeRepository(
         repo: RealtimeDbRepository
-    ):RealtimeRepository
+    ): RealtimeRepository
+
+    @Binds
+    abstract fun providesFirestoreRepository(
+        repo: FirestoreDbRepositoryImpl
+    ): FirestoreRepository
 
     @Binds
     abstract fun providesFirebaseAuthRepository(
         repo: AuthRepositoryImpl
-    ):AuthRepository
+    ): AuthRepository
 }
