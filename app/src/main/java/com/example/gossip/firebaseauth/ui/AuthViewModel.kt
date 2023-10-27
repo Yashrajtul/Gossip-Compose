@@ -12,6 +12,9 @@ import com.example.gossip.firestoredb.repository.FirestoreRepository
 import com.example.gossip.utils.ResultState
 import com.example.gossip.utils.showMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,6 +23,9 @@ class AuthViewModel @Inject constructor(
     private val authRepo: AuthRepository,
     private val fstoreRepo: FirestoreRepository
 ) : ViewModel() {
+    private val _authUiState = MutableStateFlow(AuthState())
+    val authUiState: StateFlow<AuthState> = _authUiState.asStateFlow()
+
     var isDialog by mutableStateOf(false)
         private set
     private var phone by mutableStateOf("")
@@ -114,3 +120,9 @@ class AuthViewModel @Inject constructor(
         }
     }
 }
+
+data class AuthState(
+    val isDialog: Boolean = false,
+    val phone: String = "",
+    val otp: String = ""
+)

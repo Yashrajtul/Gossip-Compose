@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gossip.firebaseauth.screens.PhoneAuthScreen
-import com.example.gossip.ui.MainScreen
+//import com.example.gossip.ui.MainScreen
 import com.example.gossip.ui.SplashScreen
 import com.example.gossip.ui.theme.GossipTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,7 +65,7 @@ fun Navigation(context: Context = LocalContext.current, onClick: (name: String) 
             }
         }
         composable("main_screen") {
-            MainScreen(context, onClick)
+//            MainScreen(context, onClick)
         }
     }
 }

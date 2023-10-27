@@ -19,7 +19,7 @@ object FirebaseModule {
     @Provides
     @Singleton
     fun providesRealtimeDb():DatabaseReference =
-        Firebase.database.reference.child("users")
+        Firebase.database.reference.child("userchats")
 
     @Provides
     @Singleton

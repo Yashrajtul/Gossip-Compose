@@ -5,8 +5,8 @@ import com.example.gossip.utils.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface RealtimeRepository {
-    fun insertUser(
-        user: RealtimeModelResponse.User
+    fun insertUserChats(
+        userChats: RealtimeModelResponse
     ): Flow<ResultState<String>>
 
     fun getUser(): Flow<ResultState<List<RealtimeModelResponse>>>

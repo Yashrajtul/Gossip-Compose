@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -36,14 +35,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import com.example.gossip.data.Datasource.chats
-import com.example.gossip.model.Chat
+import com.example.gossip.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(context: Context = LocalContext.current, onClick: (name: String) -> Unit) {
+fun MainScreen(
+    context: Context = LocalContext.current,
+    onClick: (name: String) -> Unit
+) {
     var showMenu by remember { mutableStateOf(false) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -96,24 +98,6 @@ fun MainScreen(context: Context = LocalContext.current, onClick: (name: String) 
                             Toast.makeText(context, "Help", Toast.LENGTH_SHORT).show()
                             showMenu = false
                         })
-                        DropdownMenuItem(text = {
-                            Text(text = "Help")
-                        }, onClick = {
-                            Toast.makeText(context, "Help", Toast.LENGTH_SHORT).show()
-                            showMenu = false
-                        })
-                        DropdownMenuItem(text = {
-                            Text(text = "Help")
-                        }, onClick = {
-                            Toast.makeText(context, "Help", Toast.LENGTH_SHORT).show()
-                            showMenu = false
-                        })
-                        DropdownMenuItem(text = {
-                            Text(text = "Help")
-                        }, onClick = {
-                            Toast.makeText(context, "Help", Toast.LENGTH_SHORT).show()
-                            showMenu = false
-                        })
 
                     }
                 }
@@ -127,24 +111,24 @@ fun MainScreen(context: Context = LocalContext.current, onClick: (name: String) 
 
 @Composable
 fun MainChats(
+//    chat : List<Chat> = chats,
     modifier: Modifier,
-    chat : List<Chat> = chats,
     onClick: (name: String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(chat){
-            ChatUnit(it, onClick)
+        items(9) {
+            ChatUnit(it.toString(), onClick)
         }
     }
 }
 
 @Composable
 fun ChatUnit(
-    chat : Chat,
-//    text: String,
+//    chat : Chat,
+    text: String,
     onClick: (name: String) -> Unit
 ) {
     Row(
@@ -153,12 +137,14 @@ fun ChatUnit(
             .fillMaxWidth()
             .height(90.dp)
             .clickable {
-                onClick(chat.name)
+//                onClick(chat.name)
             }
+            .padding(horizontal = 4.dp)
     ) {
         Spacer(modifier = Modifier.padding(6.dp))
         Image(
-            painter = painterResource(id = chat.image),
+//            painter = painterResource(id = chat.image),
+            painter = painterResource(id = R.drawable.baseline_person_24),
             contentDescription = "",
             modifier = Modifier
                 .clip(CircleShape)
@@ -168,12 +154,29 @@ fun ChatUnit(
                 }
         )
         Spacer(modifier = Modifier.padding(4.dp))
-        Text(text = chat.name)
+//        Text(text = chat.name)
+        Text(
+            text = text,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }
 
-//@Preview
-//@Composable
-//fun PreviewChatUnit() {
-//    ChatUnit(text = "Yash", onClick = onClick)
-//}
+@Preview(showBackground = true)
+@Composable
+fun PreviewChatUnit() {
+    ChatUnit(text = "Yash", onClick = { })
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainChatsPreiview() {
+    MainChats(modifier = Modifier, onClick = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreiview() {
+    MainScreen(onClick = {})
+}

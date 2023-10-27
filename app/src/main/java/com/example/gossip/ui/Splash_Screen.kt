@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun SplashScreen(mainScreen: () -> Unit) {
+fun SplashScreen(navigateTo: () -> Unit) {
     val scale = remember {
         Animatable(0f)
     }
@@ -33,7 +33,7 @@ fun SplashScreen(mainScreen: () -> Unit) {
             )
         )
         delay(3000L)
-        mainScreen()
+        navigateTo()
     }
     Box(
         contentAlignment = Alignment.Center,

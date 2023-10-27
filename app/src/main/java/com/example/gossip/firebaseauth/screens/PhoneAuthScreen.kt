@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.gossip.R
 import com.example.gossip.firebaseauth.common.CommonDialog
 import com.example.gossip.firebaseauth.common.OTPTextFields
@@ -50,6 +52,7 @@ fun PhoneAuthScreen(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+    val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
     var mobile by remember { mutableStateOf("") }
     var otp by remember { mutableStateOf("") }
 
@@ -60,11 +63,11 @@ fun PhoneAuthScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp)
-    ){
-        Column (
+    ) {
+        Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             Text(
                 text = "OTP Screen",
                 fontSize = 20.sp,
@@ -121,7 +124,9 @@ fun PhoneAuthScreen(
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(10.dp))
-            OTPTextFields(length = 6) { getOpt ->
+            OTPTextFields(
+                length = 6
+            ) { getOpt ->
                 otp = getOpt
 
             }
@@ -145,7 +150,6 @@ fun PhoneAuthScreen(
         }
     }
 }
-
 
 
 //@Preview(showSystemUi = true)

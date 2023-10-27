@@ -7,6 +7,6 @@ data class ChatRoom(
     data class Chat(
         val members: List<String>? = emptyList(),
         val messages: List<String>? = emptyList(),
-        val lastUpdate: Int
+        val lastUpdated: Int
     )
 }
