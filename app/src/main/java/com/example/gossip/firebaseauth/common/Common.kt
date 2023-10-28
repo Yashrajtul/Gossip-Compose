@@ -19,10 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -160,21 +162,25 @@ fun ImagePickerScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .size(250.dp)
-                .clickable {
-                    photoPicker.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly
+        Card (
+            shape = CircleShape
+        ){
+            AsyncImage(
+                modifier = Modifier
+                    .size(250.dp)
+                    .clickable {
+                        photoPicker.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
                         )
-                    )
-                },
-            model = ImageRequest.Builder(LocalContext.current).data(imageUri)
-                .crossfade(enable = true).build(),
-            contentDescription = "Avatar Image",
-            contentScale = ContentScale.Crop,
-        )
+                    },
+                model = ImageRequest.Builder(LocalContext.current).data(imageUri)
+                    .crossfade(enable = true).build(),
+                contentDescription = "Avatar Image",
+                contentScale = ContentScale.Crop,
+            )
+        }
         Spacer(modifier = Modifier.height(24.dp))
         LazyRow {
             items(selectedImageUris) { uri ->

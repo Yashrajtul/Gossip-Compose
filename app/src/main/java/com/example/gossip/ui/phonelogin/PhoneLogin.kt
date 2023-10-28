@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,20 +38,29 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.gossip.R
+import com.example.gossip.firebaseauth.common.CommonDialog
 import com.example.gossip.firebaseauth.common.OTPTextFields
+import com.example.gossip.firebaseauth.ui.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login() {
-
-    var phoneNumber by remember { mutableStateOf("") }
-    var isButtonEnabled by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
+fun Login(
+    modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = hiltViewModel()
+) {
+    val loginUiState = viewModel.loginUiState.collectAsStateWithLifecycle()
+//    var phoneNumber by rememberSaveable { mutableStateOf("") }
+//    var isButtonEnabled by rememberSaveable { mutableStateOf(false) }
+    val focusRequester = rememberSaveable { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
+    if(loginUiState.value.isDialog)
+        CommonDialog()
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
@@ -59,16 +69,18 @@ fun Login() {
         Image(
             painter = painterResource(id = R.drawable.baseline_phone_android_24),
             contentDescription = "Phone Icon",
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(200.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = phoneNumber,
+//            value = phoneNumber,
+            value = loginUiState.value.phoneNumber,
             onValueChange = {
-                phoneNumber = it
-                isButtonEnabled = it.isNotEmpty()
+                viewModel.getPhoneNumber(it)
+//                phoneNumber = it
+//                isButtonEnabled = it.isNotEmpty()
             },
             label = { Text("Phone Number") },
             leadingIcon = {
@@ -84,12 +96,15 @@ fun Login() {
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if (isButtonEnabled) {
+                    if (loginUiState.value.isButtonEnabled) {
+                        viewModel.checkError()
+//                        viewModel.sendOtp()
                         // Handle login button click here
                     }
                     focusManager.clearFocus()
                 }
             ),
+            isError = loginUiState.value.isError,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
@@ -106,6 +121,7 @@ fun Login() {
         Button(
             onClick = {
                 focusManager.clearFocus()
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,7 +129,7 @@ fun Login() {
             colors = ButtonDefaults.buttonColors()
         ) {
             Text(
-                text = "Verify Otp",
+                text = "Login",
                 fontSize = 18.sp,
                 color = Color.White
             )

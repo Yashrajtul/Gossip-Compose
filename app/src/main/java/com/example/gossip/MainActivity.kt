@@ -14,9 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gossip.firebaseauth.common.ImagePickerScreen
 import com.example.gossip.firebaseauth.screens.PhoneAuthScreen
 //import com.example.gossip.ui.MainScreen
 import com.example.gossip.ui.SplashScreen
+import com.example.gossip.ui.phonelogin.Login
 import com.example.gossip.ui.theme.GossipTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,9 +37,13 @@ class MainActivity : ComponentActivity() {
 //                        startActivity(MessageActivity.getIntent(this, it))
 //                    }
 
-                    PhoneAuthScreen(
-                        activity = this
-                    )
+//                    PhoneAuthScreen(
+//                        activity = this
+//                    )
+
+//                    ImagePickerScreen()
+
+                    Login()
                 }
             }
         }

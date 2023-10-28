@@ -57,9 +57,9 @@ fun OtpScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.baseline_phone_android_24),
+            painter = painterResource(id = R.drawable.baseline_password_24),
             contentDescription = "Phone Icon",
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(200.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -81,7 +81,7 @@ fun OtpScreen() {
             colors = ButtonDefaults.buttonColors()
         ) {
             Text(
-                text = "Login",
+                text = "Verify OTP",
                 fontSize = 18.sp,
                 color = Color.White
             )
