@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.sp
 import com.example.gossip.R
 import com.example.gossip.firebaseauth.common.OTPTextFields
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtpScreen() {
 
@@ -92,5 +91,5 @@ fun OtpScreen() {
 @Preview(showBackground = true)
 @Composable
 fun OtpScreenPreview() {
-    Login()
+    OtpScreen()
 }

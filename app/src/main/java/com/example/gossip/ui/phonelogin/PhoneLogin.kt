@@ -20,11 +20,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -38,26 +35,30 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.gossip.R
 import com.example.gossip.firebaseauth.common.CommonDialog
-import com.example.gossip.firebaseauth.common.OTPTextFields
-import com.example.gossip.firebaseauth.ui.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Login(
+    phoneNumber: String,
+    isDialog: Boolean,
+    isError: Boolean,
+    isButtonEnabled: Boolean,
+    getPhoneNumber: (phoneNumber: String) -> Unit,
+    sendOtp: () -> Unit,
+    checkError: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = hiltViewModel()
+//    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val loginUiState = viewModel.loginUiState.collectAsStateWithLifecycle()
+//    val loginUiState = viewModel.loginUiState.collectAsStateWithLifecycle()
+
 //    var phoneNumber by rememberSaveable { mutableStateOf("") }
 //    var isButtonEnabled by rememberSaveable { mutableStateOf(false) }
-    val focusRequester = rememberSaveable { FocusRequester() }
+    val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    if(loginUiState.value.isDialog)
+    if(isDialog)
         CommonDialog()
     Column(
         modifier = modifier
@@ -76,9 +77,9 @@ fun Login(
 
         OutlinedTextField(
 //            value = phoneNumber,
-            value = loginUiState.value.phoneNumber,
+            value = phoneNumber,
             onValueChange = {
-                viewModel.getPhoneNumber(it)
+                getPhoneNumber(it)
 //                phoneNumber = it
 //                isButtonEnabled = it.isNotEmpty()
             },
@@ -96,15 +97,17 @@ fun Login(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if (loginUiState.value.isButtonEnabled) {
-                        viewModel.checkError()
+                    // Handle login button click here
+//                    if (isButtonEnabled) {
+                    if (isButtonEnabled) {
+                        checkError()
+
 //                        viewModel.sendOtp()
-                        // Handle login button click here
                     }
                     focusManager.clearFocus()
                 }
             ),
-            isError = loginUiState.value.isError,
+            isError = isError,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
@@ -140,5 +143,39 @@ fun Login(
 @Preview(showBackground = true)
 @Composable
 fun LoginPreview() {
-    Login()
+    Login(
+        phoneNumber = "9914",
+        isDialog = false,
+        isError = true,
+        isButtonEnabled = true,
+        getPhoneNumber = {},
+        sendOtp = {},
+        checkError = {}
+    )
+}
+@Preview(showBackground = true)
+@Composable
+fun LoginPreview1() {
+    Login(
+        phoneNumber = "",
+        isDialog = false,
+        isError = false,
+        isButtonEnabled = false,
+        getPhoneNumber = {},
+        sendOtp = {},
+        checkError = {}
+    )
+}
+@Preview(showBackground = true)
+@Composable
+fun LoginPreview2() {
+    Login(
+        phoneNumber = "",
+        isDialog = true,
+        isError = false,
+        isButtonEnabled = true,
+        getPhoneNumber = {},
+        sendOtp = {},
+        checkError = {}
+    )
 }

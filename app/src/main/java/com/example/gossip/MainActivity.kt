@@ -6,11 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,6 +19,7 @@ import com.example.gossip.firebaseauth.screens.PhoneAuthScreen
 //import com.example.gossip.ui.MainScreen
 import com.example.gossip.ui.SplashScreen
 import com.example.gossip.ui.phonelogin.Login
+import com.example.gossip.ui.phonelogin.LoginViewModel
 import com.example.gossip.ui.theme.GossipTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,8 +43,17 @@ class MainActivity : ComponentActivity() {
 //                    )
 
 //                    ImagePickerScreen()
-
-                    Login()
+                    val viewModel: LoginViewModel = hiltViewModel()
+                    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
+                    Login(
+                        phoneNumber = loginState.value.phoneNumber,
+                        isError = loginState.value.isError,
+                        isButtonEnabled = loginState.value.isButtonEnabled,
+                        isDialog = loginState.value.isDialog,
+                        getPhoneNumber = viewModel::getPhoneNumber,
+                        sendOtp = {},
+                        checkError = viewModel::checkError
+                    )
                 }
             }
         }
