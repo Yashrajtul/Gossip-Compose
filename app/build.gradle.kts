@@ -102,6 +102,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
 
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }
 kapt {
     correctErrorTypes = true

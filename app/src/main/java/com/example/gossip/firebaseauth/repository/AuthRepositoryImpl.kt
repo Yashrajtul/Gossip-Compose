@@ -56,8 +56,6 @@ class AuthRepositoryImpl @Inject constructor(
             .addOnCompleteListener {
                 if(it.isSuccessful){
                     trySend(ResultState.Success("OTP Verified"))
-                    println(it.result.additionalUserInfo?.username)
-                    println(it.result.user?.phoneNumber)
                 }
             }
             .addOnFailureListener {

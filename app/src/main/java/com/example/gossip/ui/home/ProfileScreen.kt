@@ -151,7 +151,7 @@ fun ProfileScreen() {
 
 @Composable
 fun ProfileImage() {
-    val imageUri = rememberSaveable { mutableStateOf("") }
+    val imageUri = rememberSaveable { mutableStateOf(R.drawable.baseline_person_24.toString()) }
     val painter = rememberAsyncImagePainter(
         if (imageUri.value.isEmpty()) {
             R.drawable.baseline_person_24
@@ -162,7 +162,6 @@ fun ProfileImage() {
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let { imageUri.value = it.toString() }
-
         }
 
 
@@ -179,7 +178,9 @@ fun ProfileImage() {
                 .size(100.dp)
         ) {
             Image(
-                painter = painter, contentDescription = null, modifier = Modifier
+                painter = painter,
+                contentDescription = null,
+                modifier = Modifier
                     .wrapContentSize()
                     .clickable { launcher.launch("image/") },
                 contentScale = ContentScale.Crop

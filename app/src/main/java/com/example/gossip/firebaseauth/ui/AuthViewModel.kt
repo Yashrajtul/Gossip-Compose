@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gossip.firebaseauth.repository.AuthRepository
@@ -21,10 +22,12 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepo: AuthRepository,
-    private val fstoreRepo: FirestoreRepository
+    private val fstoreRepo: FirestoreRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val _authUiState = MutableStateFlow(AuthState())
-    val authUiState: StateFlow<AuthState> = _authUiState.asStateFlow()
+//    private val _authUiState = MutableStateFlow(AuthState())
+//    val authUiState: StateFlow<AuthState> = _authUiState.asStateFlow()
+    val authUiState = savedStateHandle.getStateFlow("authState", AuthState())
 
     var isDialog by mutableStateOf(false)
         private set
@@ -124,5 +127,6 @@ class AuthViewModel @Inject constructor(
 data class AuthState(
     val isDialog: Boolean = false,
     val phone: String = "",
-    val otp: String = ""
+    val otp: String = "",
+    val username: String = ""
 )
