@@ -15,11 +15,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gossip.firebaseauth.common.ImagePickerScreen
-import com.example.gossip.firebaseauth.screens.PhoneAuthScreen
+import com.example.gossip.navigation.NavigationGraph
 //import com.example.gossip.ui.MainScreen
 import com.example.gossip.ui.SplashScreen
 import com.example.gossip.ui.phonelogin.Login
 import com.example.gossip.ui.phonelogin.LoginViewModel
+import com.example.gossip.ui.phonelogin.OtpScreen
 import com.example.gossip.ui.theme.GossipTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,17 +44,35 @@ class MainActivity : ComponentActivity() {
 //                    )
 
 //                    ImagePickerScreen()
-                    val viewModel: LoginViewModel = hiltViewModel()
-                    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
-                    Login(
-                        phoneNumber = loginState.value.phoneNumber,
-                        isError = loginState.value.isError,
-                        isButtonEnabled = loginState.value.isButtonEnabled,
-                        isDialog = loginState.value.isDialog,
-                        getPhoneNumber = viewModel::getPhoneNumber,
-                        sendOtp = {},
-                        checkError = viewModel::checkError
-                    )
+                    
+//                    val viewModel: LoginViewModel = hiltViewModel()
+//                    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
+//                    Login(
+//                        phoneNumber = loginState.value.phoneNumber,
+//                        isError = loginState.value.isError,
+//                        isButtonEnabled = loginState.value.isButtonEnabled,
+//                        isDialog = loginState.value.isDialog,
+//                        getPhoneNumber = viewModel::getPhoneNumber,
+//                        sendOtp = {
+//                            viewModel.sendOtp(this)
+////                            if(loginState.value.otpSent)
+//
+//                        }
+//                    )
+//                    OtpScreen(
+//                        otp = loginState.value.otp,
+//                        isDialog = loginState.value.isDialog,
+//                        getOtp = {
+//                            viewModel.getOtp(it)
+//                            if (loginState.value.otp.length == 6){
+//                                viewModel.verifyOtp(this)
+////                                if(loginState.value.otpVerified)
+//
+//                            }
+//                        }
+//                    )
+                    
+                    NavigationGraph(activity = this)
                 }
             }
         }

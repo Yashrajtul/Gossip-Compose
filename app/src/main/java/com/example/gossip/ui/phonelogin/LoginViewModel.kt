@@ -25,7 +25,8 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
     private val _loginUiState = MutableStateFlow(LoginState())
     val loginUiState: StateFlow<LoginState> = _loginUiState.asStateFlow()
-//    var loginUiState = savedStateHandle.getStateFlow("login", LoginState())
+
+    //    var loginUiState = savedStateHandle.getStateFlow("login", LoginState())
 //        private set
     fun getPhoneNumber(phoneNumber: String) {
         _loginUiState.update {
@@ -35,8 +36,16 @@ class LoginViewModel @Inject constructor(
             )
         }
     }
+    fun getOtp(otp: String) {
+        _loginUiState.update {
+            it.copy(
+                otp = otp,
+                isButtonEnabled = otp.isNotEmpty()
+            )
+        }
+    }
 
-    fun checkError() {
+    private fun checkError() {
         _loginUiState.update {
             it.copy(
                 isError = loginUiState.value.phoneNumber.length != 10
@@ -58,7 +67,12 @@ class LoginViewModel @Inject constructor(
                 ).collect {
                     when (it) {
                         is ResultState.Success -> {
-                            _loginUiState.update { it.copy(isDialog = false) }
+                            _loginUiState.update {
+                                it.copy(
+                                    isDialog = false,
+//                                    otpSent = true
+                                )
+                            }
 //                        isDialog = false
                             activity.showMsg(it.data)
                         }
@@ -80,12 +94,12 @@ class LoginViewModel @Inject constructor(
     }
 
     fun verifyOtp(
-        otp: String,
+//        otp: String,
         activity: Activity
     ) {
         viewModelScope.launch {
             authRepo.signWithCredential(
-                otp
+                loginUiState.value.otp
             ).collect {
                 when (it) {
                     is ResultState.Success -> {
@@ -102,7 +116,12 @@ class LoginViewModel @Inject constructor(
                         ).collect {
                             when (it) {
                                 is ResultState.Success -> {
-                                    _loginUiState.update { it.copy(isDialog = false) }
+                                    _loginUiState.update {
+                                        it.copy(
+                                            isDialog = false,
+//                                            otpVerified = true
+                                        )
+                                    }
 //                                    isDialog = false
                                     activity.showMsg(it.data)
                                 }
@@ -144,5 +163,7 @@ data class LoginState(
     var isDialog: Boolean = false,
     var username: String = "",
     var isButtonEnabled: Boolean = false,
-    var isError: Boolean = false
+    var isError: Boolean = false,
+//    var otpSent: Boolean = false,
+//    var otpVerified: Boolean = false
 )

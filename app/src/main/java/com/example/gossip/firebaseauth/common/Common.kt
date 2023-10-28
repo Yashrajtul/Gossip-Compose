@@ -68,22 +68,21 @@ fun CommonDialogPreview() {
 
 @Composable
 fun OTPTextFields(
+    otp: String,
     modifier: Modifier = Modifier,
     length: Int,
-    onFilled: (code: String) -> Unit
+    getOtp: (otp: String) -> Unit,
+    verifyOtp: () -> Unit
+//    onFilled: (code: String) -> Unit
 ) {
-    var otpValue by remember {
-        mutableStateOf("")
-    }
+//    var otpValue by remember { mutableStateOf("") }
     BasicTextField(
         modifier = modifier.padding(8.dp),
-        value = otpValue,
+        value = otp,
         onValueChange = {
-            if (it.length <= 6)
-                otpValue = it;
-            if (it.length == 6) {
-                onFilled(otpValue)
-            }
+            getOtp(it)
+            if(it.length == 6)
+                verifyOtp()
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.NumberPassword,
@@ -95,10 +94,10 @@ fun OTPTextFields(
             ) {
                 repeat(length) { index ->
                     val char = when {
-                        index >= otpValue.length -> ""
-                        else -> otpValue[index].toString()
+                        index >= otp.length -> ""
+                        else -> otp[index].toString()
                     }
-                    val isFocused = otpValue.length == index
+                    val isFocused = otp.length == index
                     Text(
                         modifier = Modifier
                             .width(40.dp)
@@ -126,7 +125,7 @@ fun OTPTextFields(
 @Preview(showBackground = true)
 @Composable
 fun OTPTextFields() {
-    OTPTextFields(length = 6, onFilled = {})
+    OTPTextFields(otp = "", length = 6, getOtp = {}, verifyOtp = {})
 }
 
 @Composable

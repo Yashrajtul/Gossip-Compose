@@ -47,14 +47,8 @@ fun Login(
     isButtonEnabled: Boolean,
     getPhoneNumber: (phoneNumber: String) -> Unit,
     sendOtp: () -> Unit,
-    checkError: () -> Unit,
     modifier: Modifier = Modifier,
-//    viewModel: LoginViewModel = hiltViewModel()
 ) {
-//    val loginUiState = viewModel.loginUiState.collectAsStateWithLifecycle()
-
-//    var phoneNumber by rememberSaveable { mutableStateOf("") }
-//    var isButtonEnabled by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -76,12 +70,9 @@ fun Login(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-//            value = phoneNumber,
             value = phoneNumber,
             onValueChange = {
                 getPhoneNumber(it)
-//                phoneNumber = it
-//                isButtonEnabled = it.isNotEmpty()
             },
             label = { Text("Phone Number") },
             leadingIcon = {
@@ -98,11 +89,8 @@ fun Login(
             keyboardActions = KeyboardActions(
                 onDone = {
                     // Handle login button click here
-//                    if (isButtonEnabled) {
                     if (isButtonEnabled) {
-                        checkError()
-
-//                        viewModel.sendOtp()
+                        sendOtp()
                     }
                     focusManager.clearFocus()
                 }
@@ -124,7 +112,7 @@ fun Login(
         Button(
             onClick = {
                 focusManager.clearFocus()
-
+                sendOtp()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -150,7 +138,7 @@ fun LoginPreview() {
         isButtonEnabled = true,
         getPhoneNumber = {},
         sendOtp = {},
-        checkError = {}
+//        checkError = {}
     )
 }
 @Preview(showBackground = true)
@@ -163,7 +151,7 @@ fun LoginPreview1() {
         isButtonEnabled = false,
         getPhoneNumber = {},
         sendOtp = {},
-        checkError = {}
+//        checkError = {}
     )
 }
 @Preview(showBackground = true)
@@ -176,6 +164,6 @@ fun LoginPreview2() {
         isButtonEnabled = true,
         getPhoneNumber = {},
         sendOtp = {},
-        checkError = {}
+//        checkError = {}
     )
 }
