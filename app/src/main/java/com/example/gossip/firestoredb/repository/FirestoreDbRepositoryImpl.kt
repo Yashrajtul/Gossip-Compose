@@ -17,24 +17,6 @@ class FirestoreDbRepositoryImpl @Inject constructor(
     private val db: FirebaseFirestore,
     private val storage: StorageReference
 ) : FirestoreRepository {
-    override fun insertUser(user: UserDataModelResponse): Flow<ResultState<String>> =
-        callbackFlow {
-            trySend(ResultState.Loading)
-
-            db.collection("user")
-                .document(user.key!!)
-                .set(user.user!!)
-                .addOnSuccessListener {
-                    trySend(ResultState.Success("Data is inserted with ${user.key}"))
-                }.addOnFailureListener {
-                    trySend(ResultState.Failure(it))
-                }
-
-            awaitClose {
-                close()
-            }
-        }
-
     override fun getUsers(): Flow<ResultState<List<UserDataModelResponse>>> =
         callbackFlow {
             trySend(ResultState.Loading)
@@ -107,11 +89,11 @@ class FirestoreDbRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun uploadPic(image: Uri, res: UserDataModelResponse): Flow<ResultState<String>> =
+    override fun uploadPic(image: Uri, key: String): Flow<ResultState<String>> =
         callbackFlow {
             trySend(ResultState.Loading)
 
-            storage.child("profilePictures/${res.key}")
+            storage.child("profilePictures/${key}")
                 .putFile(image)
                 .addOnCompleteListener {
                     if (it.isSuccessful)
@@ -144,21 +126,15 @@ class FirestoreDbRepositoryImpl @Inject constructor(
     override fun updateUser(res: UserDataModelResponse): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
-//        val map = HashMap<String, Any>()
-//        map["username"] = res.user?.username!!
-//        map["phone"] = res.user.phone!!
-//        map["createdTimestamp"] = res.user.createdTimestamp
-
         db.collection("user")
             .document(res.key!!)
             .set(res.user!!)
             .addOnCompleteListener {
                 if (it.isSuccessful)
-                    trySend(ResultState.Success("Updated Successfully..."))
+                    trySend(ResultState.Success("User Updated"))
             }.addOnFailureListener {
                 trySend(ResultState.Failure(it))
             }
-
 
         awaitClose {
             close()

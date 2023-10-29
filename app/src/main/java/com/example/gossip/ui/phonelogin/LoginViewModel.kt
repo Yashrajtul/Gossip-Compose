@@ -77,12 +77,10 @@ class LoginViewModel @Inject constructor(
                 authRepo.createUserWithPhone(
                     loginUiState.value.phoneNumber,
                     activity
-                ).collect {
+                ).collect { it ->
                     when (it) {
                         is ResultState.Success -> {
-                            _loginUiState.update {
-                                it.copy(isDialog = false)
-                            }
+                            _loginUiState.update { it.copy(isDialog = false) }
                             activity.showMsg(it.data)
                         }
 
@@ -106,79 +104,13 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             authRepo.signWithCredential(
                 loginUiState.value.otp
-            ).collect {
+            ).collect { it ->
                 when (it) {
                     is ResultState.Success -> {
                         val userId = authRepo.currentUser()
-                        fstoreRepo.getUserData(userId).collect {
-                            when (it) {
-                                is ResultState.Success -> {
-                                    _loginUiState.update { currentState ->
-                                        currentState.copy(
-                                            isDialog = false,
-                                            username = it.data.user?.username!!
-                                        )
-                                    }
-                                    fstoreRepo.getProfilePic(userId).collect {imgData->
-                                        when (imgData) {
-                                            is ResultState.Success -> {
-                                                _loginUiState.update { currentState ->
-                                                    currentState.copy(
-                                                        isDialog = false,
-                                                        image = imgData.data
-                                                    )
-                                                }
-                                                fstoreRepo.insertUser(
-                                                    user = UserDataModelResponse(
-                                                        user = UserDataModelResponse.User(
-                                                            username = loginUiState.value.username,
-                                                            phone = loginUiState.value.phoneNumber,
-                                                            userId = userId,
-                                                            createdTimestamp = Timestamp.now()
-                                                        ),
-                                                        key = userId
-                                                    )
-                                                ).collect {
-                                                    when (it) {
-                                                        is ResultState.Success -> {
-                                                            _loginUiState.update {
-                                                                it.copy(isDialog = false)
-                                                            }
-                                                            activity.showMsg(it.data)
-                                                        }
+                        getUserData(userId)
+                        getProfilePic(userId)
 
-                                                        is ResultState.Failure -> {
-                                                            _loginUiState.update { it.copy(isDialog = false) }
-                                                            activity.showMsg(it.msg.toString())
-                                                        }
-
-                                                        ResultState.Loading -> {
-                                                            _loginUiState.update { it.copy(isDialog = true) }
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            is ResultState.Failure -> {
-                                                _loginUiState.update { it.copy(isDialog = false) }
-                                            }
-
-                                            ResultState.Loading -> {
-                                                _loginUiState.update { it.copy(isDialog = true) }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                is ResultState.Failure -> {
-                                    _loginUiState.update { it.copy(isDialog = false) }
-                                }
-
-                                ResultState.Loading -> {
-                                    _loginUiState.update { it.copy(isDialog = true) }
-                                }
-                            }
-                        }
                         _loginUiState.update { it.copy(isDialog = false) }
                         activity.showMsg(it.data)
                     }
@@ -196,52 +128,43 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun updateProfile(activity: Activity) {
-        _loginUiState.update {
-            it.copy(isError = loginUiState.value.username.length < 3)
-        }
-        if (loginUiState.value.isError) {
-            activity.showMsg("Username length should be at least 3 chars")
-            return
-        }
+    private fun getProfilePic(userId: String) {
         viewModelScope.launch {
-            val userId = authRepo.currentUser()
-            val user = UserDataModelResponse(
-                user = UserDataModelResponse.User(
-                    username = loginUiState.value.username,
-                    phone = loginUiState.value.phoneNumber,
-                    userId = userId,
-                    createdTimestamp = Timestamp.now()
-                ),
-                key = userId
-            )
+            fstoreRepo.getProfilePic(userId)
+                .collect { imageUri ->
+                    when (imageUri) {
+                        is ResultState.Success -> { _loginUiState.update {
+                                it.copy(isDialog = false, image = imageUri.data)
+                            } }
+                        is ResultState.Failure -> { _loginUiState.update { it.copy(isDialog = false) } }
+                        ResultState.Loading -> { _loginUiState.update { it.copy(isDialog = true) } }
+                    }
+                }
+        }
+    }
 
-            if (loginUiState.value.image != null) {
-                fstoreRepo.uploadPic(
-                    loginUiState.value.image!!,
-                    user
-                ).collect {
+    private fun getUserData(userId: String) {
+        viewModelScope.launch {
+            fstoreRepo.getUserData(userId)
+                .collect { user ->
+                    when (user) {
+                        is ResultState.Success -> { _loginUiState.update {
+                            it.copy(isDialog = false, username = user.data.user?.username!!)
+                        } }
+                        is ResultState.Failure -> { _loginUiState.update { it.copy(isDialog = false) } }
+                        ResultState.Loading -> { _loginUiState.update { it.copy(isDialog = true) } }
+                    }
+                }
+        }
+    }
+    private fun updateUser(user: UserDataModelResponse, activity: Activity) {
+        viewModelScope.launch {
+            fstoreRepo.updateUser(user)
+                .collect { it ->
                     when (it) {
                         is ResultState.Success -> {
                             _loginUiState.update { it.copy(isDialog = false) }
-                            fstoreRepo.updateUser(user)
-                                .collect {
-                                    when (it) {
-                                        is ResultState.Success -> {
-                                            _loginUiState.update { it.copy(isDialog = false) }
-                                            activity.showMsg("UserInfo Updated")
-                                        }
-
-                                        is ResultState.Failure -> {
-                                            _loginUiState.update { it.copy(isDialog = false) }
-                                            activity.showMsg(it.toString())
-                                        }
-
-                                        ResultState.Loading -> {
-                                            _loginUiState.update { it.copy(isDialog = true) }
-                                        }
-                                    }
-                                }
+                            activity.showMsg(it.data)
                         }
 
                         is ResultState.Failure -> {
@@ -254,27 +177,43 @@ class LoginViewModel @Inject constructor(
                         }
                     }
                 }
-            } else {
-                fstoreRepo.updateUser(user)
-                    .collect {
-                        when (it) {
-                            is ResultState.Success -> {
-                                _loginUiState.update { it.copy(isDialog = false) }
-                                activity.showMsg("UserInfo Updated")
-                            }
-
-                            is ResultState.Failure -> {
-                                _loginUiState.update { it.copy(isDialog = false) }
-                                activity.showMsg(it.toString())
-                            }
-
-                            ResultState.Loading -> {
-                                _loginUiState.update { it.copy(isDialog = true) }
-                            }
-                        }
-                    }
-            }
         }
+    }
+
+    private fun updateProfilePicture(image: Uri, key: String) {
+        viewModelScope.launch {
+            fstoreRepo.uploadPic(image, key)
+                .collect {it->
+                    when (it) {
+                        is ResultState.Success -> { _loginUiState.update { it.copy(isDialog = false) }}
+                        is ResultState.Failure -> { _loginUiState.update { it.copy(isDialog = false) }}
+                        ResultState.Loading -> { _loginUiState.update { it.copy(isDialog = true) }}
+                    }
+                }
+        }
+    }
+
+    fun updateProfile(activity: Activity) {
+        _loginUiState.update {
+            it.copy(isError = loginUiState.value.username.length < 3)
+        }
+        if (loginUiState.value.isError) {
+            activity.showMsg("Username length should be at least 3 chars")
+            return
+        }
+        val userId = authRepo.currentUser()
+        val user = UserDataModelResponse(
+            user = UserDataModelResponse.User(
+                username = loginUiState.value.username,
+                phone = loginUiState.value.phoneNumber,
+                userId = userId,
+                createdTimestamp = Timestamp.now()
+            ),
+            key = userId
+        )
+        if(loginUiState.value.image != null)
+            updateProfilePicture(loginUiState.value.image!!, userId)
+        updateUser(user, activity)
     }
 }
 

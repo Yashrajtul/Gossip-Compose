@@ -38,8 +38,6 @@ class AuthViewModel @Inject constructor(
         otp: String
     ) = authRepo.signWithCredential(otp)
 
-    private fun insertUser(user: UserDataModelResponse) = fstoreRepo.insertUser(user)
-
     fun sendOtp(
         mobile: String,
         activity: Activity
@@ -80,8 +78,8 @@ class AuthViewModel @Inject constructor(
                 when (it) {
                     is ResultState.Success -> {
                         isDialog = false
-                        insertUser(
-                            user = UserDataModelResponse(
+                        fstoreRepo.updateUser(
+                            res = UserDataModelResponse(
                                 user = UserDataModelResponse.User(
                                     phone = phone
                                 ),

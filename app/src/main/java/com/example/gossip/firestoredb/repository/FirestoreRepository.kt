@@ -8,10 +8,6 @@ import com.example.gossip.utils.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface FirestoreRepository {
-    fun insertUser(
-        user: UserDataModelResponse
-    ): Flow<ResultState<String>>
-
     fun getUsers(): Flow<ResultState<List<UserDataModelResponse>>>
 
     fun getUserData(key: String): Flow<ResultState<UserDataModelResponse>>
@@ -22,7 +18,7 @@ interface FirestoreRepository {
 
     fun uploadPic(
         image: Uri,
-        res: UserDataModelResponse
+        key: String
     ): Flow<ResultState<String>>
 
     fun getProfilePic(
