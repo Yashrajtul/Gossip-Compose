@@ -17,7 +17,8 @@ class AuthRepositoryImpl @Inject constructor(
     private val authdb: FirebaseAuth
 ) : AuthRepository {
     private lateinit var mVerificationCode:String
-    override fun createUserWithPhone(phone: String, activity: Activity): Flow<ResultState<String>> = callbackFlow{
+    private lateinit var resendingToken:PhoneAuthProvider.ForceResendingToken
+    override fun createUserWithPhone(phone: String, activity: Activity, resend: Boolean): Flow<ResultState<String>> = callbackFlow{
         trySend(ResultState.Loading)
 
         val onVerificationCallback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
@@ -29,12 +30,12 @@ class AuthRepositoryImpl @Inject constructor(
                 trySend(ResultState.Failure(p0))
             }
 
-            override fun onCodeSent(verificationCode: String, p1: PhoneAuthProvider.ForceResendingToken) {
-                super.onCodeSent(verificationCode, p1)
+            override fun onCodeSent(verificationCode: String, forceResendingToken: PhoneAuthProvider.ForceResendingToken) {
+                super.onCodeSent(verificationCode, forceResendingToken)
                 trySend(ResultState.Success("OTP Sent Successfully"))
                 mVerificationCode = verificationCode
+                resendingToken = forceResendingToken
             }
-
 
         }
         val options = PhoneAuthOptions.newBuilder(authdb)
@@ -42,12 +43,15 @@ class AuthRepositoryImpl @Inject constructor(
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(activity)
             .setCallbacks(onVerificationCallback)
-            .build()
-        PhoneAuthProvider.verifyPhoneNumber(options)
+        if(resend)
+            PhoneAuthProvider.verifyPhoneNumber(options.setForceResendingToken(resendingToken).build())
+        else
+            PhoneAuthProvider.verifyPhoneNumber(options.build())
         awaitClose {
             close()
         }
     }
+
 
     override fun signWithCredential(otp: String): Flow<ResultState<String>> = callbackFlow{
         trySend(ResultState.Loading)
@@ -65,6 +69,7 @@ class AuthRepositoryImpl @Inject constructor(
             close()
         }
     }
+
 
     override fun currentUser(): String{
         return authdb.currentUser?.uid ?: ""

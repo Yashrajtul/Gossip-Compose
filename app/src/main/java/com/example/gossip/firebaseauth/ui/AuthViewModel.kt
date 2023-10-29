@@ -32,7 +32,7 @@ class AuthViewModel @Inject constructor(
     private fun createUserWithPhone(
         phone: String,
         activity: Activity
-    ) = authRepo.createUserWithPhone(phone, activity)
+    ) = authRepo.createUserWithPhone(phone, activity, false)
 
     private fun signInWithCredential(
         otp: String

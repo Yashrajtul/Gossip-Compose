@@ -2,6 +2,7 @@ package com.example.gossip.navigation
 
 import android.app.Activity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,7 @@ import com.example.gossip.ui.phonelogin.DetailsLogin
 import com.example.gossip.ui.phonelogin.Login
 import com.example.gossip.ui.phonelogin.LoginViewModel
 import com.example.gossip.ui.phonelogin.OtpScreen
+import com.example.gossip.utils.showMsg
 
 @Composable
 fun NavigationGraph(activity: Activity) {
@@ -37,40 +39,40 @@ fun NavigationGraph(activity: Activity) {
             composable("login") {
                 val viewModel = it.sharedViewModel<LoginViewModel>(navController)
                 val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
-
+                LaunchedEffect(key1 = loginState.value.otpSent){
+                    if(loginState.value.otpSent)
+                        navController.navigate("otp")
+                }
                 Login(
                     phoneNumber = loginState.value.phoneNumber,
                     isError = loginState.value.isError,
                     isButtonEnabled = loginState.value.isButtonEnabled,
                     isDialog = loginState.value.isDialog,
                     getPhoneNumber = viewModel::getPhoneNumber,
-                    sendOtp = {
-                        viewModel.sendOtp(activity)
-//                        if(loginState.value.otpSent)
-                        navController.navigate("otp")
-                    }
+                    sendOtp = { viewModel.sendOtp(activity) }
                 )
             }
             composable("otp") {
                 val viewModel = it.sharedViewModel<LoginViewModel>(navController)
                 val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
+                LaunchedEffect(key1 = loginState.value.isOtpVerified){
+                    if(loginState.value.isOtpVerified)
+                        navController.navigate("userinfo")
+                }
                 OtpScreen(
                     otp = loginState.value.otp,
+                    timer = loginState.value.timer,
+                    isError = loginState.value.isError,
                     isDialog = loginState.value.isDialog,
+                    isButtonEnabled = loginState.value.isButtonEnabled,
                     getOtp = { otp ->
                         viewModel.getOtp(otp)
                         if(otp.length == 6){
                             viewModel.verifyOtp(activity)
-                            navController.navigate("userinfo")
                         }
                     },
-                    verifyOtp = {
-                        if (loginState.value.otp.length == 6) {
-                            viewModel.verifyOtp(activity)
-//                                if(loginState.value.otpVerified)
-                            navController.navigate("userinfo")
-                        }
-                    }
+                    updateTimer = viewModel::updateTimer,
+                    resendOtp = { viewModel.resendOtp(activity) }
                 )
             }
             composable("userinfo") {

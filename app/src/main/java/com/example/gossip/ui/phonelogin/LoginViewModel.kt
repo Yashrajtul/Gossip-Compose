@@ -2,6 +2,7 @@ package com.example.gossip.ui.phonelogin
 
 import android.app.Activity
 import android.net.Uri
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gossip.firebaseauth.repository.AuthRepository
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.concurrent.fixedRateTimer
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -36,56 +38,41 @@ class LoginViewModel @Inject constructor(
     }
 
     fun getOtp(otp: String) {
-        _loginUiState.update {
-            it.copy(
-                otp = otp,
-                isButtonEnabled = otp.isNotEmpty()
-            )
-        }
+        _loginUiState.update { it.copy(otp = otp, isError = false) }
     }
 
     fun getUserName(username: String) {
-        _loginUiState.update {
-            it.copy(
-                username = username
-            )
-        }
+        _loginUiState.update { it.copy(username = username) }
     }
 
     fun getImage(image: Uri?) {
-        _loginUiState.update {
-            it.copy(
-                image = image
-            )
-        }
+        _loginUiState.update { it.copy(image = image) }
     }
 
     private fun checkError() {
-        _loginUiState.update {
-            it.copy(
-                isError = loginUiState.value.phoneNumber.length != 10
-            )
-        }
+        _loginUiState.update { it.copy(isError = loginUiState.value.phoneNumber.length != 10) }
     }
 
     fun sendOtp(
         activity: Activity
     ) {
-        checkError()
-        if (!loginUiState.value.isError) {
+        if (!loginUiState.value.resend) checkError()
+        if (loginUiState.value.isError) activity.showMsg("Enter 10 digit number")
+        else {
             viewModelScope.launch {
                 authRepo.createUserWithPhone(
                     loginUiState.value.phoneNumber,
-                    activity
+                    activity,
+                    loginUiState.value.resend
                 ).collect { it ->
                     when (it) {
                         is ResultState.Success -> {
-                            _loginUiState.update { it.copy(isDialog = false) }
+                            _loginUiState.update { it.copy(isDialog = false, isButtonEnabled = false, otpSent = true) }
                             activity.showMsg(it.data)
                         }
 
                         is ResultState.Failure -> {
-                            _loginUiState.update { it.copy(isDialog = false) }
+                            _loginUiState.update { it.copy(isDialog = false, isButtonEnabled = true) }
                             activity.showMsg(it.msg.toString())
                         }
 
@@ -107,6 +94,7 @@ class LoginViewModel @Inject constructor(
             ).collect { it ->
                 when (it) {
                     is ResultState.Success -> {
+                        _loginUiState.update { it.copy(isOtpVerified = true, isError = false) }
                         val userId = authRepo.currentUser()
                         getUserData(userId)
                         getProfilePic(userId)
@@ -116,8 +104,8 @@ class LoginViewModel @Inject constructor(
                     }
 
                     is ResultState.Failure -> {
-                        _loginUiState.update { it.copy(isDialog = false) }
-                        activity.showMsg(it.msg.toString())
+                        _loginUiState.update { it.copy(isDialog = false, isError = true) }
+                        activity.showMsg("Invalid OTP")
                     }
 
                     ResultState.Loading -> {
@@ -215,6 +203,19 @@ class LoginViewModel @Inject constructor(
             updateProfilePicture(loginUiState.value.image!!, userId)
         updateUser(user, activity)
     }
+
+    fun updateTimer(timer: Long){
+        if (timer != 0L)
+            _loginUiState.update { it.copy(isButtonEnabled = false, timer = timer) }
+        else
+            _loginUiState.update { it.copy(isButtonEnabled = true, timer = timer) }
+    }
+    fun resendOtp(activity: Activity){
+        _loginUiState.update {
+            it.copy(isButtonEnabled = false, timer = 60L, resend = true)
+        }
+        sendOtp(activity)
+    }
 }
 
 data class LoginState(
@@ -224,5 +225,9 @@ data class LoginState(
     var isDialog: Boolean = false,
     var isButtonEnabled: Boolean = false,
     var isError: Boolean = false,
-    var image: Uri? = null
+    var resend: Boolean = false,
+    var otpSent: Boolean = false,
+    var isOtpVerified: Boolean = false,
+    var image: Uri? = null,
+    var timer: Long = 60L
 )

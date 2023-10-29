@@ -133,10 +133,6 @@ fun DetailsLogin(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-//                    if (isButtonEnabled) {
-//                        // Handle login button click here
-                    updateProfile()
-//                    }
                     focusManager.clearFocus()
                 }
             ),

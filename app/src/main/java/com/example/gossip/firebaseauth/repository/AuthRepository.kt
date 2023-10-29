@@ -8,12 +8,14 @@ interface AuthRepository {
 
     fun createUserWithPhone(
         phone:String,
-        activity: Activity
+        activity: Activity,
+        resend: Boolean
     ):Flow<ResultState<String>>
 
     fun signWithCredential(
         otp: String
     ):Flow<ResultState<String>>
+
 
     fun currentUser():String
 }

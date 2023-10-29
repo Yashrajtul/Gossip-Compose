@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
@@ -69,20 +70,16 @@ fun CommonDialogPreview() {
 @Composable
 fun OTPTextFields(
     otp: String,
+    isError: Boolean,
     modifier: Modifier = Modifier,
     length: Int,
-    getOtp: (otp: String) -> Unit,
-    verifyOtp: () -> Unit
-//    onFilled: (code: String) -> Unit
+    getOtp: (otp: String) -> Unit
 ) {
-//    var otpValue by remember { mutableStateOf("") }
     BasicTextField(
         modifier = modifier.padding(8.dp),
         value = otp,
         onValueChange = {
             getOtp(it)
-            if(it.length == 6)
-                verifyOtp()
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.NumberPassword,
@@ -111,7 +108,7 @@ fun OTPTextFields(
                             .padding(2.dp),
                         text = char,
                         style = MaterialTheme.typography.headlineMedium,
-                        color = PurpleGrey40,
+                        color = if(isError) Color.Red else PurpleGrey40,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -125,7 +122,7 @@ fun OTPTextFields(
 @Preview(showBackground = true)
 @Composable
 fun OTPTextFields() {
-    OTPTextFields(otp = "", length = 6, getOtp = {}, verifyOtp = {})
+    OTPTextFields(otp = "123", isError = true, length = 6, getOtp = {})
 }
 
 @Composable

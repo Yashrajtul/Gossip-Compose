@@ -46,8 +46,8 @@ class MainActivity : ComponentActivity() {
 
 //                    ImagePickerScreen()
 
-                    val viewModel: LoginViewModel = hiltViewModel()
-                    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
+//                    val viewModel: LoginViewModel = hiltViewModel()
+//                    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
 //                    Login(
 //                        phoneNumber = loginState.value.phoneNumber,
 //                        isError = loginState.value.isError,
@@ -61,15 +61,19 @@ class MainActivity : ComponentActivity() {
 //                    )
 //                    OtpScreen(
 //                        otp = loginState.value.otp,
+//                        timer = loginState.value.timer,
 //                        isDialog = loginState.value.isDialog,
+//                        isButtonEnabled = loginState.value.isButtonEnabled,
 //                        getOtp = {
 //                            viewModel.getOtp(it)
-//                            if (loginState.value.otp.length == 6){
+//                            if (loginState.value.otp.length == 6) {
 //                                viewModel.verifyOtp(this)
-////                                if(loginState.value.otpVerified)
-//
+////                                navController.navigate("userinfo")
 //                            }
-//                        }
+//                        },
+//                        updateTimer = viewModel::updateTimer,
+//                        resendOtp = { viewModel.resendOtp(this) }
+//
 //                    )
 
 //                    DetailsLogin(
