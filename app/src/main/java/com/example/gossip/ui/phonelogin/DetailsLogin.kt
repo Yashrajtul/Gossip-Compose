@@ -1,5 +1,6 @@
 package com.example.gossip.ui.phonelogin
 
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -18,12 +19,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,28 +52,38 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.gossip.R
+import com.example.gossip.firebaseauth.common.CommonDialog
 import com.example.gossip.firebaseauth.common.OTPTextFields
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailsLogin() {
+fun DetailsLogin(
+    username: String,
+    image: Uri?,
+    isDialog: Boolean,
+    isError: Boolean,
+    getUserName: (username: String) -> Unit,
+    getImage: (image: Uri) -> Unit,
+    updateProfile: () -> Unit
+) {
 
-    var phoneNumber by remember { mutableStateOf("") }
-    var isButtonEnabled by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    var imageUri: Any? by remember { mutableStateOf(R.drawable.baseline_person_24) }
+    var imageUri: Any? by remember { mutableStateOf(R.drawable.baseline_account_circle_24) }
     val photoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) {
         if (it != null) {
             Log.d("PhotoPicker", "Selected URI: $it")
-            imageUri = it
+//            imageUri = it
+            getImage(it)
         } else {
             Log.d("PhotoPicker", "No media selected")
         }
     }
+    if (isDialog)
+        CommonDialog()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,9 +91,9 @@ fun DetailsLogin() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card (
+        Card(
             shape = CircleShape
-        ){
+        ) {
             AsyncImage(
                 modifier = Modifier
                     .size(200.dp)
@@ -91,41 +104,49 @@ fun DetailsLogin() {
                             )
                         )
                     },
-                model = ImageRequest.Builder(LocalContext.current).data(imageUri)
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(image ?: R.drawable.baseline_account_circle_24) // (imageUri)
                     .crossfade(enable = true).build(),
                 contentDescription = "Avatar Image",
                 contentScale = ContentScale.Crop,
             )
         }
+        Text(
+            text = "Add profile picture",
+            style = MaterialTheme.typography.labelLarge
+        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
-            value = phoneNumber,
+            value = username,
             onValueChange = {
-                phoneNumber = it
-                isButtonEnabled = it.isNotEmpty()
+                getUserName(it)
+//                phoneNumber = it
+//                isButtonEnabled = it.isNotEmpty()
             },
             label = { Text("Username") },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Phone,
-                    contentDescription = "Phone Icon",
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = null,
                     tint = Color.Gray
                 )
             },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Phone,
+                keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if (isButtonEnabled) {
-                        // Handle login button click here
-                    }
+//                    if (isButtonEnabled) {
+//                        // Handle login button click here
+                    updateProfile()
+//                    }
                     focusManager.clearFocus()
                 }
             ),
+            isError = isError,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
@@ -142,6 +163,7 @@ fun DetailsLogin() {
         Button(
             onClick = {
                 focusManager.clearFocus()
+                updateProfile()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -156,8 +178,17 @@ fun DetailsLogin() {
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun DetailsLoginPreview() {
-    DetailsLogin()
+    DetailsLogin(
+        username = "",
+        image = null,
+        isDialog = false,
+        isError = false,
+        getUserName = {},
+        getImage = {},
+        updateProfile = {}
+    )
 }

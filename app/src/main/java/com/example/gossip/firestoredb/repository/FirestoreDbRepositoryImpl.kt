@@ -1,17 +1,21 @@
 package com.example.gossip.firestoredb.repository
 
+import android.net.Uri
 import com.example.gossip.firestoredb.ChatRoom
 import com.example.gossip.firestoredb.Messages
 import com.example.gossip.firestoredb.UserDataModelResponse
 import com.example.gossip.utils.ResultState
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class FirestoreDbRepositoryImpl @Inject constructor(
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val storage: StorageReference
 ) : FirestoreRepository {
     override fun insertUser(user: UserDataModelResponse): Flow<ResultState<String>> =
         callbackFlow {
@@ -40,10 +44,9 @@ class FirestoreDbRepositoryImpl @Inject constructor(
                 val items = it.map { data ->
                     UserDataModelResponse(
                         user = UserDataModelResponse.User(
-                            first = data["first"] as String?,
-                            last = data["last"] as String?,
+                            username = data["username"] as String?,
                             phone = data["phone"] as String?,
-                            profilepicture = data["profilepicture"] as String?
+                            createdTimestamp = data["createdTimestamp"] as Timestamp
                         ),
                         key = data.id
                     )
@@ -76,16 +79,35 @@ class FirestoreDbRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun uploadPic(image: Uri, res: UserDataModelResponse): Flow<ResultState<String>> =
+        callbackFlow {
+            trySend(ResultState.Loading)
+
+            storage.child("profilePictures/${res.key}.jpg")
+                .putFile(image)
+                .addOnCompleteListener {
+                    if (it.isSuccessful)
+                        trySend(ResultState.Success("Picture uploaded"))
+                }.addOnFailureListener {
+                    trySend(ResultState.Failure(it))
+                }
+
+            awaitClose {
+                close()
+            }
+        }
+
     override fun updateUser(res: UserDataModelResponse): Flow<ResultState<String>> = callbackFlow {
-        val map = HashMap<String, Any>()
-        map["first"] = res.user?.first!!
-        map["last"] = res.user.last!!
-        map["phone"] = res.user.phone!!
-        map["profilepicture"] = res.user.profilepicture!!
+        trySend(ResultState.Loading)
+
+//        val map = HashMap<String, Any>()
+//        map["username"] = res.user?.username!!
+//        map["phone"] = res.user.phone!!
+//        map["createdTimestamp"] = res.user.createdTimestamp
 
         db.collection("user")
             .document(res.key!!)
-            .update(map)
+            .set(res.user!!)
             .addOnCompleteListener {
                 if (it.isSuccessful)
                     trySend(ResultState.Success("Updated Successfully..."))
@@ -93,12 +115,13 @@ class FirestoreDbRepositoryImpl @Inject constructor(
                 trySend(ResultState.Failure(it))
             }
 
+
         awaitClose {
             close()
         }
     }
 
-    override fun createChatRoom(chat: ChatRoom.Chat): Flow<ResultState<String>> = callbackFlow{
+    override fun createChatRoom(chat: ChatRoom.Chat): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
         db.collection("chatroom")
@@ -115,7 +138,7 @@ class FirestoreDbRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun sendMessage(message: Messages.Message): Flow<ResultState<String>> = callbackFlow{
+    override fun sendMessage(message: Messages.Message): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
         db.collection("messages")
@@ -132,7 +155,7 @@ class FirestoreDbRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun deleteMessage(key: String): Flow<ResultState<String>> = callbackFlow{
+    override fun deleteMessage(key: String): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
         db.collection("messages")

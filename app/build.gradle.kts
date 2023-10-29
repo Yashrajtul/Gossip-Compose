@@ -73,12 +73,11 @@ dependencies {
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
-    implementation("com.google.firebase:firebase-database-ktx:20.3.0")
-    implementation("com.google.firebase:firebase-inappmessaging-display-ktx:20.4.0")
-    implementation("com.google.firebase:firebase-auth-ktx:22.2.0")
+    implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-auth:22.2.0")
     implementation("com.google.firebase:firebase-firestore:24.9.0")
-    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-inappmessaging-display:20.4.0")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.android.play:integrity:1.2.0")
     implementation("androidx.browser:browser:1.6.0")

@@ -1,8 +1,10 @@
 package com.example.gossip.ui.phonelogin
 
 import android.app.Activity
-import androidx.compose.runtime.State
-import androidx.lifecycle.SavedStateHandle
+import android.content.Context
+import android.net.Uri
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gossip.firebaseauth.repository.AuthRepository
@@ -10,10 +12,12 @@ import com.example.gossip.firestoredb.UserDataModelResponse
 import com.example.gossip.firestoredb.repository.FirestoreRepository
 import com.example.gossip.utils.ResultState
 import com.example.gossip.utils.showMsg
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,8 +30,6 @@ class LoginViewModel @Inject constructor(
     private val _loginUiState = MutableStateFlow(LoginState())
     val loginUiState: StateFlow<LoginState> = _loginUiState.asStateFlow()
 
-    //    var loginUiState = savedStateHandle.getStateFlow("login", LoginState())
-//        private set
     fun getPhoneNumber(phoneNumber: String) {
         _loginUiState.update {
             it.copy(
@@ -36,11 +38,28 @@ class LoginViewModel @Inject constructor(
             )
         }
     }
+
     fun getOtp(otp: String) {
         _loginUiState.update {
             it.copy(
                 otp = otp,
                 isButtonEnabled = otp.isNotEmpty()
+            )
+        }
+    }
+
+    fun getUserName(username: String) {
+        _loginUiState.update {
+            it.copy(
+                username = username
+            )
+        }
+    }
+
+    fun getImage(image: Uri?) {
+        _loginUiState.update {
+            it.copy(
+                image = image
             )
         }
     }
@@ -104,14 +123,14 @@ class LoginViewModel @Inject constructor(
                 when (it) {
                     is ResultState.Success -> {
                         _loginUiState.update { it.copy(isDialog = false) }
-//                        isDialog = false
+                        val userId = authRepo.currentUser()
                         fstoreRepo.insertUser(
                             user = UserDataModelResponse(
                                 user = UserDataModelResponse.User(
-                                    phone = loginUiState.value.phoneNumber
-//                                    phone = phone
+                                    phone = loginUiState.value.phoneNumber,
+                                    userId = userId
                                 ),
-                                key = authRepo.currentUser()
+                                key = userId
                             )
                         ).collect {
                             when (it) {
@@ -122,19 +141,16 @@ class LoginViewModel @Inject constructor(
 //                                            otpVerified = true
                                         )
                                     }
-//                                    isDialog = false
                                     activity.showMsg(it.data)
                                 }
 
                                 is ResultState.Failure -> {
                                     _loginUiState.update { it.copy(isDialog = false) }
-//                                    isDialog = false
                                     activity.showMsg(it.msg.toString())
                                 }
 
                                 ResultState.Loading -> {
                                     _loginUiState.update { it.copy(isDialog = true) }
-//                                    isDialog = true
                                 }
                             }
                         }
@@ -143,15 +159,94 @@ class LoginViewModel @Inject constructor(
 
                     is ResultState.Failure -> {
                         _loginUiState.update { it.copy(isDialog = false) }
-//                        isDialog = false
                         activity.showMsg(it.msg.toString())
                     }
 
                     ResultState.Loading -> {
                         _loginUiState.update { it.copy(isDialog = true) }
-//                        isDialog = true
                     }
                 }
+            }
+        }
+    }
+
+    fun updateProfile(activity: Activity) {
+        _loginUiState.update {
+            it.copy(isError = loginUiState.value.username.length < 3)
+        }
+        if (loginUiState.value.isError) {
+            activity.showMsg("Username length should be at least 3 chars")
+            return
+        }
+        viewModelScope.launch {
+            val userId = authRepo.currentUser()
+            val user = UserDataModelResponse(
+                user = UserDataModelResponse.User(
+                    username = loginUiState.value.username,
+                    phone = loginUiState.value.phoneNumber,
+                    userId = userId,
+                    createdTimestamp = Timestamp.now()
+                ),
+                key = userId
+            )
+
+            if (loginUiState.value.image != null) {
+                fstoreRepo.uploadPic(
+                    loginUiState.value.image!!,
+                    user
+                ).collect {
+                    when (it) {
+                        is ResultState.Success -> {
+                            _loginUiState.update { it.copy(isDialog = false) }
+                            fstoreRepo.updateUser(user)
+                                .collect {
+                                    when (it) {
+                                        is ResultState.Success -> {
+                                            _loginUiState.update { it.copy(isDialog = false) }
+                                            activity.showMsg("UserInfo Updated")
+                                        }
+
+                                        is ResultState.Failure -> {
+                                            _loginUiState.update { it.copy(isDialog = false) }
+                                            activity.showMsg(it.toString())
+                                        }
+
+                                        ResultState.Loading -> {
+                                            _loginUiState.update { it.copy(isDialog = true) }
+                                        }
+                                    }
+                                }
+                        }
+
+                        is ResultState.Failure -> {
+                            _loginUiState.update { it.copy(isDialog = false) }
+                            activity.showMsg(it.toString())
+                        }
+
+                        ResultState.Loading -> {
+                            _loginUiState.update { it.copy(isDialog = true) }
+                        }
+                    }
+                }
+            } else {
+                fstoreRepo.updateUser(user)
+                    .collect {
+                        when (it) {
+                            is ResultState.Success -> {
+                                _loginUiState.update { it.copy(isDialog = false) }
+                                activity.showMsg("UserInfo Updated")
+                            }
+
+                            is ResultState.Failure -> {
+                                _loginUiState.update { it.copy(isDialog = false) }
+                                activity.showMsg(it.toString())
+                            }
+
+                            ResultState.Loading -> {
+                                _loginUiState.update { it.copy(isDialog = true) }
+                            }
+                        }
+                    }
             }
         }
     }
@@ -160,10 +255,9 @@ class LoginViewModel @Inject constructor(
 data class LoginState(
     var phoneNumber: String = "",
     var otp: String = "",
-    var isDialog: Boolean = false,
     var username: String = "",
+    var isDialog: Boolean = false,
     var isButtonEnabled: Boolean = false,
     var isError: Boolean = false,
-//    var otpSent: Boolean = false,
-//    var otpVerified: Boolean = false
+    var image: Uri? = null
 )

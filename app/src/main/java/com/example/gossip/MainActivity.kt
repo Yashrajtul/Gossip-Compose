@@ -18,6 +18,7 @@ import com.example.gossip.firebaseauth.common.ImagePickerScreen
 import com.example.gossip.navigation.NavigationGraph
 //import com.example.gossip.ui.MainScreen
 import com.example.gossip.ui.SplashScreen
+import com.example.gossip.ui.phonelogin.DetailsLogin
 import com.example.gossip.ui.phonelogin.Login
 import com.example.gossip.ui.phonelogin.LoginViewModel
 import com.example.gossip.ui.phonelogin.OtpScreen
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity() {
 //                    )
 
 //                    ImagePickerScreen()
-                    
+
 //                    val viewModel: LoginViewModel = hiltViewModel()
 //                    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
 //                    Login(
@@ -56,7 +57,6 @@ class MainActivity : ComponentActivity() {
 //                        sendOtp = {
 //                            viewModel.sendOtp(this)
 ////                            if(loginState.value.otpSent)
-//
 //                        }
 //                    )
 //                    OtpScreen(
@@ -71,7 +71,18 @@ class MainActivity : ComponentActivity() {
 //                            }
 //                        }
 //                    )
-                    
+
+//                    DetailsLogin(
+//                        username = loginState.value.username,
+//                        image = loginState.value.image,
+//                        isDialog = loginState.value.isDialog,
+//                        isError = loginState.value.isError,
+//                        getUserName = viewModel::getUserName,
+//                        getImage = viewModel::getImage,
+//                        updateProfile = { viewModel.updateProfile(this) }
+//                    )
+
+
                     NavigationGraph(activity = this)
                 }
             }

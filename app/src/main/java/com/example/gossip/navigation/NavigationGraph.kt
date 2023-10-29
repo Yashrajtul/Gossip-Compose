@@ -57,7 +57,13 @@ fun NavigationGraph(activity: Activity) {
                 OtpScreen(
                     otp = loginState.value.otp,
                     isDialog = loginState.value.isDialog,
-                    getOtp = viewModel::getOtp,
+                    getOtp = { otp ->
+                        viewModel.getOtp(otp)
+                        if(otp.length == 6){
+                            viewModel.verifyOtp(activity)
+                            navController.navigate("userinfo")
+                        }
+                    },
                     verifyOtp = {
                         if (loginState.value.otp.length == 6) {
                             viewModel.verifyOtp(activity)
@@ -70,7 +76,15 @@ fun NavigationGraph(activity: Activity) {
             composable("userinfo") {
                 val viewModel = it.sharedViewModel<LoginViewModel>(navController)
                 val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
-                DetailsLogin()
+                DetailsLogin(
+                    username = loginState.value.username,
+                    image = loginState.value.image,
+                    isDialog = loginState.value.isDialog,
+                    isError = loginState.value.isError,
+                    getUserName = viewModel::getUserName,
+                    getImage = viewModel::getImage,
+                    updateProfile = { viewModel.updateProfile(activity) }
+                )
             }
         }
         navigation(

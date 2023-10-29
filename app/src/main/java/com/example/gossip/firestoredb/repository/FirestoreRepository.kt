@@ -1,5 +1,6 @@
 package com.example.gossip.firestoredb.repository
 
+import android.net.Uri
 import com.example.gossip.firestoredb.ChatRoom
 import com.example.gossip.firestoredb.Messages
 import com.example.gossip.firestoredb.UserDataModelResponse
@@ -15,6 +16,11 @@ interface FirestoreRepository {
 
     fun delete(
         key: String
+    ): Flow<ResultState<String>>
+
+    fun uploadPic(
+        image: Uri,
+        res: UserDataModelResponse
     ): Flow<ResultState<String>>
 
     fun updateUser(
