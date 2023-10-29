@@ -12,7 +12,9 @@ interface FirestoreRepository {
         user: UserDataModelResponse
     ): Flow<ResultState<String>>
 
-    fun getUser(): Flow<ResultState<List<UserDataModelResponse>>>
+    fun getUsers(): Flow<ResultState<List<UserDataModelResponse>>>
+
+    fun getUserData(key: String): Flow<ResultState<UserDataModelResponse>>
 
     fun delete(
         key: String
@@ -22,6 +24,10 @@ interface FirestoreRepository {
         image: Uri,
         res: UserDataModelResponse
     ): Flow<ResultState<String>>
+
+    fun getProfilePic(
+        key: String
+    ): Flow<ResultState<Uri>>
 
     fun updateUser(
         res: UserDataModelResponse

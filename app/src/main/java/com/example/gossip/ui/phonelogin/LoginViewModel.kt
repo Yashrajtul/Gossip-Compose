@@ -1,10 +1,7 @@
 package com.example.gossip.ui.phonelogin
 
 import android.app.Activity
-import android.content.Context
 import android.net.Uri
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gossip.firebaseauth.repository.AuthRepository
@@ -17,7 +14,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -73,12 +69,10 @@ class LoginViewModel @Inject constructor(
     }
 
     fun sendOtp(
-//        mobile: String,
         activity: Activity
     ) {
         checkError()
         if (!loginUiState.value.isError) {
-//        phone = mobile
             viewModelScope.launch {
                 authRepo.createUserWithPhone(
                     loginUiState.value.phoneNumber,
@@ -87,24 +81,18 @@ class LoginViewModel @Inject constructor(
                     when (it) {
                         is ResultState.Success -> {
                             _loginUiState.update {
-                                it.copy(
-                                    isDialog = false,
-//                                    otpSent = true
-                                )
+                                it.copy(isDialog = false)
                             }
-//                        isDialog = false
                             activity.showMsg(it.data)
                         }
 
                         is ResultState.Failure -> {
                             _loginUiState.update { it.copy(isDialog = false) }
-//                        isDialog = false
                             activity.showMsg(it.msg.toString())
                         }
 
                         ResultState.Loading -> {
                             _loginUiState.update { it.copy(isDialog = true) }
-//                        isDialog = true
                         }
                     }
                 }
@@ -113,7 +101,6 @@ class LoginViewModel @Inject constructor(
     }
 
     fun verifyOtp(
-//        otp: String,
         activity: Activity
     ) {
         viewModelScope.launch {
@@ -122,31 +109,69 @@ class LoginViewModel @Inject constructor(
             ).collect {
                 when (it) {
                     is ResultState.Success -> {
-                        _loginUiState.update { it.copy(isDialog = false) }
                         val userId = authRepo.currentUser()
-                        fstoreRepo.insertUser(
-                            user = UserDataModelResponse(
-                                user = UserDataModelResponse.User(
-                                    phone = loginUiState.value.phoneNumber,
-                                    userId = userId
-                                ),
-                                key = userId
-                            )
-                        ).collect {
+                        fstoreRepo.getUserData(userId).collect {
                             when (it) {
                                 is ResultState.Success -> {
-                                    _loginUiState.update {
-                                        it.copy(
+                                    _loginUiState.update { currentState ->
+                                        currentState.copy(
                                             isDialog = false,
-//                                            otpVerified = true
+                                            username = it.data.user?.username!!
                                         )
                                     }
-                                    activity.showMsg(it.data)
+                                    fstoreRepo.getProfilePic(userId).collect {imgData->
+                                        when (imgData) {
+                                            is ResultState.Success -> {
+                                                _loginUiState.update { currentState ->
+                                                    currentState.copy(
+                                                        isDialog = false,
+                                                        image = imgData.data
+                                                    )
+                                                }
+                                                fstoreRepo.insertUser(
+                                                    user = UserDataModelResponse(
+                                                        user = UserDataModelResponse.User(
+                                                            username = loginUiState.value.username,
+                                                            phone = loginUiState.value.phoneNumber,
+                                                            userId = userId,
+                                                            createdTimestamp = Timestamp.now()
+                                                        ),
+                                                        key = userId
+                                                    )
+                                                ).collect {
+                                                    when (it) {
+                                                        is ResultState.Success -> {
+                                                            _loginUiState.update {
+                                                                it.copy(isDialog = false)
+                                                            }
+                                                            activity.showMsg(it.data)
+                                                        }
+
+                                                        is ResultState.Failure -> {
+                                                            _loginUiState.update { it.copy(isDialog = false) }
+                                                            activity.showMsg(it.msg.toString())
+                                                        }
+
+                                                        ResultState.Loading -> {
+                                                            _loginUiState.update { it.copy(isDialog = true) }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            is ResultState.Failure -> {
+                                                _loginUiState.update { it.copy(isDialog = false) }
+                                            }
+
+                                            ResultState.Loading -> {
+                                                _loginUiState.update { it.copy(isDialog = true) }
+                                            }
+                                        }
+                                    }
                                 }
 
                                 is ResultState.Failure -> {
                                     _loginUiState.update { it.copy(isDialog = false) }
-                                    activity.showMsg(it.msg.toString())
                                 }
 
                                 ResultState.Loading -> {
@@ -154,6 +179,7 @@ class LoginViewModel @Inject constructor(
                                 }
                             }
                         }
+                        _loginUiState.update { it.copy(isDialog = false) }
                         activity.showMsg(it.data)
                     }
 

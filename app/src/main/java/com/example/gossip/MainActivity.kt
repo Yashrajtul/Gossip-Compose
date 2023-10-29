@@ -46,8 +46,8 @@ class MainActivity : ComponentActivity() {
 
 //                    ImagePickerScreen()
 
-//                    val viewModel: LoginViewModel = hiltViewModel()
-//                    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
+                    val viewModel: LoginViewModel = hiltViewModel()
+                    val loginState = viewModel.loginUiState.collectAsStateWithLifecycle()
 //                    Login(
 //                        phoneNumber = loginState.value.phoneNumber,
 //                        isError = loginState.value.isError,
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
 //                        isError = loginState.value.isError,
 //                        getUserName = viewModel::getUserName,
 //                        getImage = viewModel::getImage,
-//                        updateProfile = { viewModel.updateProfile(this) }
+//                        updateProfile = { viewModel.downloadImg() }
 //                    )
 
 

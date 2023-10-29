@@ -35,23 +35,51 @@ class FirestoreDbRepositoryImpl @Inject constructor(
             }
         }
 
-    override fun getUser(): Flow<ResultState<List<UserDataModelResponse>>> = callbackFlow {
+    override fun getUsers(): Flow<ResultState<List<UserDataModelResponse>>> =
+        callbackFlow {
+            trySend(ResultState.Loading)
+
+            db.collection("user")
+                .get()
+                .addOnSuccessListener {
+                    val items = it.map { data ->
+                        UserDataModelResponse(
+                            user = UserDataModelResponse.User(
+                                username = data["username"] as String?,
+                                phone = data["phone"] as String?,
+                                createdTimestamp = data["createdTimestamp"] as Timestamp
+                            ),
+                            key = data.id
+                        )
+                    }
+                    trySend(ResultState.Success(items))
+                }.addOnFailureListener {
+                    trySend(ResultState.Failure(it))
+                }
+
+            awaitClose {
+                close()
+            }
+        }
+
+    override fun getUserData(key: String): Flow<ResultState<UserDataModelResponse>> = callbackFlow{
         trySend(ResultState.Loading)
 
         db.collection("user")
+            .document(key)
             .get()
-            .addOnSuccessListener {
-                val items = it.map { data ->
-                    UserDataModelResponse(
-                        user = UserDataModelResponse.User(
-                            username = data["username"] as String?,
-                            phone = data["phone"] as String?,
-                            createdTimestamp = data["createdTimestamp"] as Timestamp
-                        ),
-                        key = data.id
-                    )
-                }
-                trySend(ResultState.Success(items))
+            .addOnSuccessListener {data->
+
+                val user = UserDataModelResponse(
+                    user = UserDataModelResponse.User(
+                        username = data["username"] as String,
+                        phone = data["phone"] as String,
+                        userId = data["userId"] as String,
+                        createdTimestamp = data["createdTimestamp"] as Timestamp
+                    ),
+                    key = key
+                )
+                trySend(ResultState.Success(user))
             }.addOnFailureListener {
                 trySend(ResultState.Failure(it))
             }
@@ -83,7 +111,7 @@ class FirestoreDbRepositoryImpl @Inject constructor(
         callbackFlow {
             trySend(ResultState.Loading)
 
-            storage.child("profilePictures/${res.key}.jpg")
+            storage.child("profilePictures/${res.key}")
                 .putFile(image)
                 .addOnCompleteListener {
                     if (it.isSuccessful)
@@ -96,6 +124,22 @@ class FirestoreDbRepositoryImpl @Inject constructor(
                 close()
             }
         }
+
+    override fun getProfilePic(key: String): Flow<ResultState<Uri>> = callbackFlow {
+        trySend(ResultState.Loading)
+
+        storage.child("profilePictures")
+            .child(key)
+            .downloadUrl
+            .addOnSuccessListener {
+                trySend(ResultState.Success(it))
+            }.addOnFailureListener {
+                trySend(ResultState.Failure(it))
+            }
+        awaitClose {
+            close()
+        }
+    }
 
     override fun updateUser(res: UserDataModelResponse): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)

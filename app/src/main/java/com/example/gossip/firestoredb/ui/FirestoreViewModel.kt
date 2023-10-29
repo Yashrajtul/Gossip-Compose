@@ -26,7 +26,7 @@ class FirestoreViewModel @Inject constructor(
     }
 
     fun getUsers() = viewModelScope.launch {
-        repo.getUser().collect{
+        repo.getUsers().collect{
             when(it){
                 is ResultState.Success->{
                     _res.value = FirestoreState(
