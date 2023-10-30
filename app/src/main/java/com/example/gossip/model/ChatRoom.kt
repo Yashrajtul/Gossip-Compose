@@ -1,4 +1,4 @@
-package com.example.gossip.firestoredb
+package com.example.gossip.model
 
 data class ChatRoom(
     val chat: Chat?,

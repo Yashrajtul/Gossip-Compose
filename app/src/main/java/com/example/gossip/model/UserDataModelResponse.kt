@@ -1,6 +1,5 @@
-package com.example.gossip.firestoredb
+package com.example.gossip.model
 
-import android.net.Uri
 import com.google.firebase.Timestamp
 
 data class UserDataModelResponse(

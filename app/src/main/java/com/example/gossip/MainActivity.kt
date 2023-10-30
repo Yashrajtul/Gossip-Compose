@@ -94,17 +94,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//@Preview
-//@Composable
-//fun PreviewScreen() {
-//    Surface(
-//        modifier = Modifier.fillMaxSize(),
-//        color = Color(0xFF202020)
-//    ) {
-//        Navigation()
-//    }
-//}
-
 @Composable
 fun Navigation(context: Context = LocalContext.current, onClick: (name: String) -> Unit) {
     val navController = rememberNavController()

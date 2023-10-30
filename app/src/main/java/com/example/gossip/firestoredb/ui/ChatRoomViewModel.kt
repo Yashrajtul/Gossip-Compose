@@ -1,7 +1,7 @@
 package com.example.gossip.firestoredb.ui
 
 import androidx.lifecycle.ViewModel
-import com.example.gossip.firestoredb.ChatRoom
+import com.example.gossip.model.ChatRoom
 import com.example.gossip.firestoredb.repository.FirestoreRepository
 import javax.inject.Inject
 

@@ -13,15 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.gossip.firebaseauth.ui.AuthViewModel
-import com.example.gossip.ui.SplashScreen
-import com.example.gossip.ui.home.ChatScreen
-import com.example.gossip.ui.home.SettingScreen
 import com.example.gossip.ui.phonelogin.DetailsLogin
 import com.example.gossip.ui.phonelogin.Login
 import com.example.gossip.ui.phonelogin.LoginViewModel
 import com.example.gossip.ui.phonelogin.OtpScreen
-import com.example.gossip.utils.showMsg
 
 @Composable
 fun NavigationGraph(activity: Activity) {
@@ -46,7 +41,6 @@ fun NavigationGraph(activity: Activity) {
                 Login(
                     phoneNumber = loginState.value.phoneNumber,
                     isError = loginState.value.isError,
-                    isButtonEnabled = loginState.value.isButtonEnabled,
                     isDialog = loginState.value.isDialog,
                     getPhoneNumber = viewModel::getPhoneNumber,
                     sendOtp = { viewModel.sendOtp(activity) }

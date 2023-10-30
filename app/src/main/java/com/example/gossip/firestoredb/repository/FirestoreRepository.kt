@@ -1,16 +1,16 @@
 package com.example.gossip.firestoredb.repository
 
 import android.net.Uri
-import com.example.gossip.firestoredb.ChatRoom
-import com.example.gossip.firestoredb.Messages
-import com.example.gossip.firestoredb.UserDataModelResponse
+import com.example.gossip.model.ChatRoom
+import com.example.gossip.model.Messages
+import com.example.gossip.model.UserDataModelResponse
 import com.example.gossip.utils.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface FirestoreRepository {
     fun getUsers(): Flow<ResultState<List<UserDataModelResponse>>>
 
-    fun getUserData(key: String): Flow<ResultState<UserDataModelResponse>>
+    fun getUserData(key: String): Flow<ResultState<UserDataModelResponse.User?>>
 
     fun delete(
         key: String

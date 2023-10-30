@@ -44,7 +44,6 @@ fun Login(
     phoneNumber: String,
     isDialog: Boolean,
     isError: Boolean,
-    isButtonEnabled: Boolean,
     getPhoneNumber: (phoneNumber: String) -> Unit,
     sendOtp: () -> Unit,
     modifier: Modifier = Modifier,
@@ -88,13 +87,11 @@ fun Login(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    // Handle login button click here
-                    if (isButtonEnabled) {
-                        sendOtp()
-                    }
+                    sendOtp()
                     focusManager.clearFocus()
                 }
             ),
+            maxLines = 1,
             isError = isError,
             modifier = Modifier
                 .fillMaxWidth()
@@ -135,10 +132,8 @@ fun LoginPreview() {
         phoneNumber = "9914",
         isDialog = false,
         isError = true,
-        isButtonEnabled = true,
         getPhoneNumber = {},
         sendOtp = {},
-//        checkError = {}
     )
 }
 @Preview(showBackground = true)
@@ -148,10 +143,8 @@ fun LoginPreview1() {
         phoneNumber = "",
         isDialog = false,
         isError = false,
-        isButtonEnabled = false,
         getPhoneNumber = {},
         sendOtp = {},
-//        checkError = {}
     )
 }
 @Preview(showBackground = true)
@@ -161,9 +154,7 @@ fun LoginPreview2() {
         phoneNumber = "",
         isDialog = true,
         isError = false,
-        isButtonEnabled = true,
         getPhoneNumber = {},
         sendOtp = {},
-//        checkError = {}
     )
 }
