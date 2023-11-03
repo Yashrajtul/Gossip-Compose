@@ -70,6 +70,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun signOut(){
+        authdb.signOut()
+    }
 
     override fun currentUser(): String{
         return authdb.currentUser?.uid ?: ""

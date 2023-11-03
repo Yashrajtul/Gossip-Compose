@@ -100,11 +100,6 @@ fun ChatScreen(
     }
 }
 
-@Composable
-fun SettingScreen(
 
-) {
-
-}
 
 

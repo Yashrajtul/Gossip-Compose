@@ -1,4 +1,4 @@
-package com.example.gossip.firebaseauth.common
+package com.example.gossip.common
 
 import android.net.Uri
 import android.util.Log
