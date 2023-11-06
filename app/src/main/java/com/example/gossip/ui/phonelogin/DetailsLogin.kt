@@ -60,7 +60,8 @@ fun DetailsLogin(
     isError: Boolean,
     getUserName: (username: String) -> Unit,
     getImage: (image: Uri) -> Unit,
-    updateProfile: () -> Unit
+    updateProfile: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val focusRequester = remember { FocusRequester() }
@@ -81,7 +82,7 @@ fun DetailsLogin(
     if (isDialog)
         CommonDialog()
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,

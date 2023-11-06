@@ -5,7 +5,10 @@
     <string name="PhoneEntry">Enter Phone Number</string>
     <string name="OtpEntry">Enter OTP</string>
     <string name="DetailEntry">Enter Details</string>
+    <string name="Chat">Chat</string>
     <string name="Profile">Profile</string>
+    <string name="SplashScreen">SplashScreen</string>
+    <string name="Auth">Auth</string>
 
 </resources>
 

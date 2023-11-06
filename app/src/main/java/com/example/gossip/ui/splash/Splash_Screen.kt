@@ -26,35 +26,35 @@ import com.example.gossip.R
 import kotlinx.coroutines.delay
 
 
-@Composable
-fun SplashScreen(navigateTo: () -> Unit) {
-    val scale = remember {
-        Animatable(0f)
-    }
-    LaunchedEffect(key1 = true) {
-        scale.animateTo(
-            targetValue = .3f,
-            animationSpec = tween(
-                durationMillis = 500,
-                easing = {
-                    OvershootInterpolator(2f).getInterpolation(it)
-                }
-            )
-        )
-        delay(3000L)
-        navigateTo()
-    }
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = "logo",
-            modifier = Modifier.scale(scale.value)
-        )
-    }
-}
+//@Composable
+//fun SplashScreen(navigateTo: () -> Unit) {
+//    val scale = remember {
+//        Animatable(0f)
+//    }
+//    LaunchedEffect(key1 = true) {
+//        scale.animateTo(
+//            targetValue = .3f,
+//            animationSpec = tween(
+//                durationMillis = 500,
+//                easing = {
+//                    OvershootInterpolator(2f).getInterpolation(it)
+//                }
+//            )
+//        )
+//        delay(3000L)
+//        navigateTo()
+//    }
+//    Box(
+//        contentAlignment = Alignment.Center,
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+//        Image(
+//            painter = painterResource(id = R.drawable.ic_launcher_background),
+//            contentDescription = "logo",
+//            modifier = Modifier.scale(scale.value)
+//        )
+//    }
+//}
 
 @Composable
 fun SplashScreen1(
@@ -91,13 +91,13 @@ fun SplashScreen1(
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SplashScreenPreview() {
-    SplashScreen() {
-
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SplashScreenPreview() {
+//    SplashScreen() {
+//
+//    }
+//}
 
 @Preview
 @Composable

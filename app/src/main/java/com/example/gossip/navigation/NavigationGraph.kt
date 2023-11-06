@@ -26,27 +26,26 @@ import com.example.gossip.ui.splash.SplashViewModel
 @Composable
 fun NavigationGraph(activity: Activity) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "splashscreen") {
-        composable("splashscreen") {
+    NavHost(navController = navController, startDestination = GossipScreen.SplashScreen.name) {
+        composable(GossipScreen.SplashScreen.name) {
             val viewModel = hiltViewModel<SplashViewModel>()
             SplashScreen1 {
-                if(viewModel.isLoggedIn)
-                    navController.navigate("home") { popUpTo(0) }
-                else
-                    navController.navigate("auth") { popUpTo(0) }
+                navController.navigate(if (viewModel.isLoggedIn) GossipScreen.Home.name else GossipScreen.Auth.name) {
+                    popUpTo(0)
+                }
             }
         }
         navigation(
-            startDestination = "login",
-            route = "auth"
+            startDestination = AuthScreen.PhoneEntry.name,
+            route = GossipScreen.Auth.name
         ) {
-            composable("login") {
+            composable(AuthScreen.PhoneEntry.name) {
                 val viewModel = it.sharedViewModel<LoginViewModel>(navController)
                 val loginState by viewModel.loginUiState.collectAsStateWithLifecycle()
-                LaunchedEffect(key1 = loginState.navigate){
-                    if(loginState.navigate) {
+                LaunchedEffect(key1 = loginState.navigate) {
+                    if (loginState.navigate) {
                         viewModel.updateNavigationState()
-                        navController.navigate("otp")
+                        navController.navigate(AuthScreen.OtpEntry.name)
                     }
                 }
                 Login(
@@ -57,14 +56,15 @@ fun NavigationGraph(activity: Activity) {
                     sendOtp = { viewModel.sendOtp(activity) }
                 )
             }
-            composable("otp") {
+            composable(AuthScreen.OtpEntry.name) {
                 val viewModel = it.sharedViewModel<LoginViewModel>(navController)
                 val loginState by viewModel.loginUiState.collectAsStateWithLifecycle()
-                LaunchedEffect(key1 = loginState.navigate){
-                    if(loginState.navigate) {
+                LaunchedEffect(key1 = loginState.navigate) {
+                    if (loginState.navigate) {
                         viewModel.updateNavigationState()
-                        navController.navigate("userinfo")
-                    }                }
+                        navController.navigate(AuthScreen.DetailEntry.name)
+                    }
+                }
                 OtpScreen(
                     otp = loginState.otp,
                     timer = loginState.timer,
@@ -73,7 +73,7 @@ fun NavigationGraph(activity: Activity) {
                     isButtonEnabled = loginState.isButtonEnabled,
                     getOtp = { otp ->
                         viewModel.getOtp(otp)
-                        if(otp.length == 6){
+                        if (otp.length == 6) {
                             viewModel.verifyOtp(activity)
                         }
                     },
@@ -81,7 +81,7 @@ fun NavigationGraph(activity: Activity) {
                     resendOtp = { viewModel.resendOtp(activity) }
                 )
             }
-            composable("userinfo") {
+            composable(AuthScreen.DetailEntry.name) {
                 val viewModel = it.sharedViewModel<LoginViewModel>(navController)
                 val loginState by viewModel.loginUiState.collectAsStateWithLifecycle()
                 DetailsLogin(
@@ -93,19 +93,19 @@ fun NavigationGraph(activity: Activity) {
                     getImage = viewModel::getImage,
                     updateProfile = {
                         viewModel.updateProfile(activity)
-                        navController.navigate("home"){ popUpTo(0) }
+                        navController.navigate(GossipScreen.Home.name) { popUpTo(0) }
                     }
                 )
             }
         }
         navigation(
-            startDestination = "settings",
-            route = "home"
+            startDestination = HomeScreen.Profile.route,
+            route = GossipScreen.Home.name
         ) {
-            composable("chats") {
+            composable(HomeScreen.Chat.route) {
 
             }
-            composable("settings") {
+            composable(HomeScreen.Profile.route) {
                 val viewModel = hiltViewModel<SettingsViewModel>()
                 val settingsState by viewModel.settingUiState.collectAsStateWithLifecycle()
                 SettingScreen(
@@ -118,7 +118,7 @@ fun NavigationGraph(activity: Activity) {
                     getImage = viewModel::getImage,
                     logout = {
                         viewModel.signOut()
-                        navController.navigate("splashscreen"){ popUpTo(0) }
+                        navController.navigate(GossipScreen.SplashScreen.name) { popUpTo(0) }
                     },
                     updateProfile = {
                         viewModel.updateProfile(activity)
@@ -139,3 +139,110 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
     }
     return hiltViewModel(parentEntry)
 }
+
+//@Composable
+//fun NavigationGraph1(activity: Activity) {
+//    val navController = rememberNavController()
+//    NavHost(navController = navController, startDestination = "splashscreen") {
+//        composable("splashscreen") {
+//            val viewModel = hiltViewModel<SplashViewModel>()
+//            SplashScreen1 {
+//                if(viewModel.isLoggedIn)
+//                    navController.navigate("home") { popUpTo(0) }
+//                else
+//                    navController.navigate("auth") { popUpTo(0) }
+//            }
+//        }
+//        navigation(
+//            startDestination = "login",
+//            route = "auth"
+//        ) {
+//            composable("login") {
+//                val viewModel = it.sharedViewModel<LoginViewModel>(navController)
+//                val loginState by viewModel.loginUiState.collectAsStateWithLifecycle()
+//                LaunchedEffect(key1 = loginState.navigate){
+//                    if(loginState.navigate) {
+//                        viewModel.updateNavigationState()
+//                        navController.navigate("otp")
+//                    }
+//                }
+//                Login(
+//                    phoneNumber = loginState.phoneNumber,
+//                    isError = loginState.isError,
+//                    isDialog = loginState.isDialog,
+//                    getPhoneNumber = viewModel::getPhoneNumber,
+//                    sendOtp = { viewModel.sendOtp(activity) }
+//                )
+//            }
+//            composable("otp") {
+//                val viewModel = it.sharedViewModel<LoginViewModel>(navController)
+//                val loginState by viewModel.loginUiState.collectAsStateWithLifecycle()
+//                LaunchedEffect(key1 = loginState.navigate){
+//                    if(loginState.navigate) {
+//                        viewModel.updateNavigationState()
+//                        navController.navigate("userinfo")
+//                    }                }
+//                OtpScreen(
+//                    otp = loginState.otp,
+//                    timer = loginState.timer,
+//                    isError = loginState.isError,
+//                    isDialog = loginState.isDialog,
+//                    isButtonEnabled = loginState.isButtonEnabled,
+//                    getOtp = { otp ->
+//                        viewModel.getOtp(otp)
+//                        if(otp.length == 6){
+//                            viewModel.verifyOtp(activity)
+//                        }
+//                    },
+//                    updateTimer = viewModel::updateTimer,
+//                    resendOtp = { viewModel.resendOtp(activity) }
+//                )
+//            }
+//            composable("userinfo") {
+//                val viewModel = it.sharedViewModel<LoginViewModel>(navController)
+//                val loginState by viewModel.loginUiState.collectAsStateWithLifecycle()
+//                DetailsLogin(
+//                    username = loginState.username,
+//                    image = loginState.image,
+//                    isDialog = loginState.isDialog,
+//                    isError = loginState.isError,
+//                    getUserName = viewModel::getUserName,
+//                    getImage = viewModel::getImage,
+//                    updateProfile = {
+//                        viewModel.updateProfile(activity)
+//                        navController.navigate("home"){ popUpTo(0) }
+//                    }
+//                )
+//            }
+//        }
+//        navigation(
+//            startDestination = "settings",
+//            route = "home"
+//        ) {
+//            composable("chats") {
+//
+//            }
+//            composable("settings") {
+//                val viewModel = hiltViewModel<SettingsViewModel>()
+//                val settingsState by viewModel.settingUiState.collectAsStateWithLifecycle()
+//                SettingScreen(
+//                    username = settingsState.username,
+//                    phoneNumber = settingsState.phoneNumber,
+//                    image = settingsState.image,
+//                    isDialog = settingsState.isDialog,
+//                    isError = settingsState.isError,
+//                    getUserName = viewModel::getUserName,
+//                    getImage = viewModel::getImage,
+//                    logout = {
+//                        viewModel.signOut()
+//                        navController.navigate("splashscreen"){ popUpTo(0) }
+//                    },
+//                    updateProfile = {
+//                        viewModel.updateProfile(activity)
+//                    }
+//                )
+//            }
+//        }
+//    }
+//}
+

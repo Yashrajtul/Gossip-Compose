@@ -31,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -69,9 +71,9 @@ import com.example.gossip.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageScreen(activity: Activity, name: String) {
+fun MessageScreen(name: String) {
     Scaffold(
-        topBar = { MessageTopAppBar(activity, name) },
+        topBar = { MessageTopAppBar(name) },
         bottomBar = { MessageBottomAppBar1() }
     ) {
         MessageContent(modifier = Modifier.padding(it))
@@ -80,7 +82,7 @@ fun MessageScreen(activity: Activity, name: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageTopAppBar(activity: Activity, name: String) {
+fun MessageTopAppBar(name: String) {
     var showMenu by remember { mutableStateOf(false) }
     TopAppBar(
         title = {
@@ -97,7 +99,7 @@ fun MessageTopAppBar(activity: Activity, name: String) {
             }
         },
         navigationIcon = {
-            IconButton(onClick = { activity.finish() }) {
+            IconButton(onClick = { /*TODO*/ }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Go Back")
             }
         },
@@ -138,15 +140,20 @@ fun MessageBottomAppBar() {
                         Icon(imageVector = Icons.Default.Face, contentDescription = "")
                     }
                 },
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
                 shape = CircleShape,
                 trailingIcon = {
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = "")
                     }
                 },
-                modifier = Modifier.fillMaxWidth(.80f)
+                modifier = Modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(2.dp))
             FloatingActionButton(
                 onClick = { /*TODO*/ },
                 shape = CircleShape
@@ -189,14 +196,20 @@ fun MessageBottomAppBar1() {
                     Icon(imageVector = Icons.Default.Face, contentDescription = "")
                 }
             },
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+            ),
             shape = CircleShape,
             trailingIcon = {
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = "")
                 }
             },
-            modifier = Modifier.fillMaxWidth(.85f)
+            modifier = Modifier.weight(1f)
         )
+        Spacer(modifier = Modifier.padding(2.dp))
         FloatingActionButton(
             onClick = { /*TODO*/ },
             shape = CircleShape
@@ -235,8 +248,6 @@ fun Message(it: Int) {
         Alignment.CenterStart
     else
         Alignment.CenterEnd
-
-
 
     Box(
         contentAlignment = contentAlignment,
@@ -286,8 +297,14 @@ fun Message(it: Int) {
     }
 }
 
-@Preview(showSystemUi = true)
+//@Preview(showSystemUi = true)
+//@Composable
+//fun PreviewMessage() {
+//    MessageContent(modifier = Modifier)
+//}
+
+@Preview
 @Composable
-fun PreviewMessage() {
-    MessageContent(modifier = Modifier)
+fun MessageScreenPreview() {
+    MessageScreen("Yash")
 }

@@ -145,7 +145,7 @@ fun ImagePickerScreen() {
     val multiplePhotoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 2)
     ) {
-        if (it != null) {
+        if (it.isNotEmpty()) {
             Log.d("PhotoPicker", "Selected URI: $it")
             selectedImageUris = it
         } else {

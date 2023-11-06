@@ -46,7 +46,7 @@ fun Login(
     isError: Boolean,
     getPhoneNumber: (phoneNumber: String) -> Unit,
     sendOtp: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
