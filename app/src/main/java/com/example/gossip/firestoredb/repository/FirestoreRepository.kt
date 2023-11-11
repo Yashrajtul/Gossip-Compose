@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface FirestoreRepository {
     fun getUsers(): Flow<ResultState<List<UserDataModelResponse>>>
 
+    fun searchUsers(searchString: String): Flow<ResultState<List<UserDataModelResponse>>>
+
     fun getUserData(key: String): Flow<ResultState<UserDataModelResponse.User?>>
 
     fun delete(

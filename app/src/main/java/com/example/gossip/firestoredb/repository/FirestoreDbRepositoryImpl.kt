@@ -29,6 +29,7 @@ class FirestoreDbRepositoryImpl @Inject constructor(
                             user = UserDataModelResponse.User(
                                 username = data["username"] as String?,
                                 phone = data["phone"] as String?,
+                                userId = data["userId"] as String?,
                                 createdTimestamp = data["createdTimestamp"] as Timestamp
                             ),
                             key = data.id
@@ -43,6 +44,33 @@ class FirestoreDbRepositoryImpl @Inject constructor(
                 close()
             }
         }
+
+    override fun searchUsers(searchString: String): Flow<ResultState<List<UserDataModelResponse>>> = callbackFlow{
+        trySend(ResultState.Loading)
+
+        db.collection("user")
+            .whereGreaterThanOrEqualTo("username",searchString)
+            .get()
+            .addOnSuccessListener {
+                val items = it.map { data ->
+                    UserDataModelResponse(
+                        user = UserDataModelResponse.User(
+                            username = data["username"] as String?,
+                            phone = data["phone"] as String?,
+                            userId = data["userId"] as String?,
+                            createdTimestamp = data["createdTimestamp"] as Timestamp
+                        ),
+                        key = data.id
+                    )
+                }
+                trySend(ResultState.Success(items))
+            }.addOnFailureListener {
+                trySend(ResultState.Failure(it))
+            }
+
+        awaitClose {
+            close()
+        }    }
 
     override fun getUserData(key: String): Flow<ResultState<UserDataModelResponse.User?>> = callbackFlow{
         trySend(ResultState.Loading)

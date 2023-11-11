@@ -80,7 +80,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.google.firebase:firebase-inappmessaging-display:20.4.0")
     implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.android.play:integrity:1.2.0")
+    implementation("com.google.android.play:integrity:1.3.0")
     implementation("androidx.browser:browser:1.6.0")
 
     // Dagger-Hilt
@@ -95,6 +95,9 @@ dependencies {
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.5")
+
+    // WorkManager
+    implementation("androidx.work:work-runtime:2.8.1")
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")

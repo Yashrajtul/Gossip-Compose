@@ -1,5 +1,7 @@
 package com.example.gossip.di
 
+import android.content.ContentProvider
+import com.example.gossip.contentproviders.MyContentProvider
 import com.example.gossip.firebaseRealtimeDb.repository.RealtimeDbRepository
 import com.example.gossip.firebaseRealtimeDb.repository.RealtimeRepository
 import com.example.gossip.firebaseauth.repository.AuthRepository
@@ -28,4 +30,5 @@ abstract class RepositoryModule {
     abstract fun providesFirebaseAuthRepository(
         repo: AuthRepositoryImpl
     ): AuthRepository
+
 }
