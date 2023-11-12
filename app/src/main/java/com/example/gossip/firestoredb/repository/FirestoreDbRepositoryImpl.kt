@@ -11,31 +11,23 @@ import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirestoreDbRepositoryImpl @Inject constructor(
     private val db: FirebaseFirestore,
     private val storage: StorageReference
 ) : FirestoreRepository {
-    override fun getUsers(): Flow<ResultState<List<UserDataModelResponse>>> =
+    override fun getUsers(): Flow<ResultState<List<UserDataModelResponse.User>>> =
         callbackFlow {
             trySend(ResultState.Loading)
 
             db.collection("user")
                 .get()
                 .addOnSuccessListener {
-                    val items = it.map { data ->
-                        UserDataModelResponse(
-                            user = UserDataModelResponse.User(
-                                username = data["username"] as String?,
-                                phone = data["phone"] as String?,
-                                userId = data["userId"] as String?,
-                                createdTimestamp = data["createdTimestamp"] as Timestamp
-                            ),
-                            key = data.id
-                        )
-                    }
-                    trySend(ResultState.Success(items))
+                    val users: List<UserDataModelResponse.User> =
+                        it.toObjects(UserDataModelResponse.User::class.java)
+                    trySend(ResultState.Success(users))
                 }.addOnFailureListener {
                     trySend(ResultState.Failure(it))
                 }
@@ -45,50 +37,64 @@ class FirestoreDbRepositoryImpl @Inject constructor(
             }
         }
 
-    override fun searchUsers(searchString: String): Flow<ResultState<List<UserDataModelResponse>>> = callbackFlow{
-        trySend(ResultState.Loading)
+    override fun searchUsers(searchString: String): Flow<ResultState<List<UserDataModelResponse.User>>> =
+        callbackFlow {
+            trySend(ResultState.Loading)
 
-        db.collection("user")
-            .whereGreaterThanOrEqualTo("username",searchString)
-            .get()
-            .addOnSuccessListener {
-                val items = it.map { data ->
-                    UserDataModelResponse(
-                        user = UserDataModelResponse.User(
-                            username = data["username"] as String?,
-                            phone = data["phone"] as String?,
-                            userId = data["userId"] as String?,
-                            createdTimestamp = data["createdTimestamp"] as Timestamp
-                        ),
-                        key = data.id
-                    )
-                }
-                trySend(ResultState.Success(items))
-            }.addOnFailureListener {
-                trySend(ResultState.Failure(it))
+//            try {
+
+                db.collection("user")
+                    .whereGreaterThanOrEqualTo("username", searchString)
+                    .get()
+                    .addOnSuccessListener {
+                        val users: List<UserDataModelResponse.User> =
+                            it.toObjects(UserDataModelResponse.User::class.java)
+//                val items = it.map { data ->
+//                    UserDataModelResponse(
+//                        user = UserDataModelResponse.User(
+//                            username = data["username"] as String?,
+//                            phone = data["phone"] as String?,
+//                            userId = data["userId"] as String?,
+//                            createdTimestamp = data["createdTimestamp"] as Timestamp
+//                        ),
+//                        key = data.id
+//                    )
+//                }
+                        trySend(ResultState.Success(users))
+                    }.addOnFailureListener {
+                        trySend(ResultState.Failure(it))
+                    }
+//                    .await()
+
+//            }catch (e:Exception){
+//                e.printStackTrace()
+//                trySend(ResultState.Failure(e))
+//            }
+
+            awaitClose {
+                close()
             }
-
-        awaitClose {
-            close()
-        }    }
-
-    override fun getUserData(key: String): Flow<ResultState<UserDataModelResponse.User?>> = callbackFlow{
-        trySend(ResultState.Loading)
-
-        db.collection("user")
-            .document(key)
-            .get()
-            .addOnSuccessListener {data->
-                val user: UserDataModelResponse.User? = data.toObject(UserDataModelResponse.User::class.java)
-                trySend(ResultState.Success(user))
-            }.addOnFailureListener {
-                trySend(ResultState.Failure(it))
-            }
-
-        awaitClose {
-            close()
         }
-    }
+
+    override fun getUserData(key: String): Flow<ResultState<UserDataModelResponse.User?>> =
+        callbackFlow {
+            trySend(ResultState.Loading)
+
+            db.collection("user")
+                .document(key)
+                .get()
+                .addOnSuccessListener { data ->
+                    val user: UserDataModelResponse.User? =
+                        data.toObject(UserDataModelResponse.User::class.java)
+                    trySend(ResultState.Success(user))
+                }.addOnFailureListener {
+                    trySend(ResultState.Failure(it))
+                }
+
+            awaitClose {
+                close()
+            }
+        }
 
     override fun delete(key: String): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
@@ -159,58 +165,4 @@ class FirestoreDbRepositoryImpl @Inject constructor(
             close()
         }
     }
-
-    override fun createChatRoom(chat: ChatRoom.Chat): Flow<ResultState<String>> = callbackFlow {
-        trySend(ResultState.Loading)
-
-        db.collection("chatroom")
-            .add(chat)
-            .addOnCompleteListener {
-                trySend(ResultState.Success(it.result.id))
-
-            }.addOnFailureListener {
-                trySend(ResultState.Failure(it))
-            }
-
-        awaitClose {
-            close()
-        }
-    }
-
-    override fun sendMessage(message: Messages.Message): Flow<ResultState<String>> = callbackFlow {
-        trySend(ResultState.Loading)
-
-        db.collection("messages")
-            .add(message)
-            .addOnCompleteListener {
-                trySend(ResultState.Success(it.result.id))
-            }
-            .addOnFailureListener {
-                trySend(ResultState.Failure(it))
-            }
-
-        awaitClose {
-            close()
-        }
-    }
-
-    override fun deleteMessage(key: String): Flow<ResultState<String>> = callbackFlow {
-        trySend(ResultState.Loading)
-
-        db.collection("messages")
-            .document(key)
-            .delete()
-            .addOnCompleteListener {
-
-                trySend(ResultState.Success("Message deleted successfully..."))
-            }.addOnFailureListener {
-                trySend(ResultState.Failure(it))
-            }
-
-        awaitClose {
-            close()
-        }
-    }
-
-
 }

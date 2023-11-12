@@ -8,9 +8,9 @@ import com.example.gossip.utils.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface FirestoreRepository {
-    fun getUsers(): Flow<ResultState<List<UserDataModelResponse>>>
+    fun getUsers(): Flow<ResultState<List<UserDataModelResponse.User>>>
 
-    fun searchUsers(searchString: String): Flow<ResultState<List<UserDataModelResponse>>>
+    fun searchUsers(searchString: String): Flow<ResultState<List<UserDataModelResponse.User>>>
 
     fun getUserData(key: String): Flow<ResultState<UserDataModelResponse.User?>>
 
@@ -31,15 +31,4 @@ interface FirestoreRepository {
         res: UserDataModelResponse
     ): Flow<ResultState<String>>
 
-    fun createChatRoom(
-        chat: ChatRoom.Chat
-    ): Flow<ResultState<String>>
-
-    fun sendMessage(
-        message: Messages.Message
-    ): Flow<ResultState<String>>
-
-    fun deleteMessage(
-        key: String
-    ): Flow<ResultState<String>>
 }

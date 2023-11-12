@@ -11,5 +11,16 @@ data class UserDataModelResponse(
         val phone: String? = "",
         val userId: String? = "",
         val createdTimestamp: Timestamp? = null
-    )
+    ){
+        fun doesMatchSearchQuery(query: String): Boolean{
+            val matchingCombinations = listOf(
+                "$username$phone",
+                "$username $phone"
+            )
+
+            return matchingCombinations.any{
+                it.contains(query, ignoreCase = true)
+            }
+        }
+    }
 }

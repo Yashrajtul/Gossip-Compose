@@ -62,7 +62,10 @@ fun NavigationGraph(activity: Activity) {
                 LaunchedEffect(key1 = loginState.navigate) {
                     if (loginState.navigate) {
                         viewModel.updateNavigationState()
-                        navController.navigate(AuthScreen.DetailEntry.name)
+                        if(loginState.username.isEmpty())
+                            navController.navigate(AuthScreen.DetailEntry.name)
+                        else
+                            navController.navigate(GossipScreen.Home.name)
                     }
                 }
                 OtpScreen(

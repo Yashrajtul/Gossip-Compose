@@ -6,10 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.gossip.ui.home.contact.ContactsScreen
-import com.example.gossip.ui.home.contact.ContactsViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.gossip.ui.home.SearchScreen
+import com.example.gossip.ui.home.SearchViewModel
 import com.example.gossip.ui.theme.GossipTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +30,13 @@ class MainActivity : ComponentActivity() {
 
 //                    NavigationGraph(activity = this)
 
+                    val viewModel: SearchViewModel by viewModels()
+                    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
+                    SearchScreen(
+                        searchText = searchState.searchText,
+                        users = searchState.users,
+                        onSearchTextChange = viewModel::onSearchTextChange
+                    )
 
 //                    SplashScreen1 {
 //                        this.showMsg("Navigate")

@@ -1,5 +1,7 @@
 package com.example.gossip.model
 
+import com.google.firebase.Timestamp
+
 data class ChatRoom(
     val chat: Chat?,
     val key: String? = ""
@@ -7,6 +9,8 @@ data class ChatRoom(
     data class Chat(
         val members: List<String>? = emptyList(),
         val messages: List<String>? = emptyList(),
-        val lastUpdated: Int
+        val chatRoomId: String? = "",
+        val lastMessageSenderId: String = "",
+        val lastUpdated: Timestamp? = null
     )
 }

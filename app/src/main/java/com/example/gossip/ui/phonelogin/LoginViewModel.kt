@@ -101,12 +101,13 @@ class LoginViewModel @Inject constructor(
             ).collect { it ->
                 when (it) {
                     is ResultState.Success -> {
-                        _loginUiState.update { it.copy(navigate = true, isError = false) }
+//                        _loginUiState.update { it.copy(navigate = true, isError = false) }
                         userId = authRepo.currentUser()
                         getUserData()
-                        getProfilePic()
 
-                        _loginUiState.update { it.copy(isDialog = false) }
+                        _loginUiState.update { it.copy(isError = false, isDialog = false) }
+
+                        getProfilePic()
                         activity.showMsg(it.data)
                     }
 
@@ -144,9 +145,9 @@ class LoginViewModel @Inject constructor(
                 .collect { user ->
                     when (user) {
                         is ResultState.Success -> {
-                            _loginUiState.update { it.copy(isDialog = false)}
                             if(user.data != null)
                                 _loginUiState.update { it.copy( username = user.data.username!!) }
+                            _loginUiState.update { it.copy(isDialog = false, navigate = true)}
                         }
                         is ResultState.Failure -> { _loginUiState.update { it.copy(isDialog = false) } }
                         ResultState.Loading -> { _loginUiState.update { it.copy(isDialog = true) } }
