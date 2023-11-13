@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.gossip.navigation.NavigationGraph
 import com.example.gossip.ui.home.SearchScreen
 import com.example.gossip.ui.home.SearchViewModel
 import com.example.gossip.ui.theme.GossipTheme
@@ -28,15 +29,15 @@ class MainActivity : ComponentActivity() {
                 ) {
 //                    ImagePickerScreen()
 
-//                    NavigationGraph(activity = this)
+                    NavigationGraph(activity = this)
 
-                    val viewModel: SearchViewModel by viewModels()
-                    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
-                    SearchScreen(
-                        searchText = searchState.searchText,
-                        users = searchState.users,
-                        onSearchTextChange = viewModel::onSearchTextChange
-                    )
+//                    val viewModel: SearchViewModel by viewModels()
+//                    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
+//                    SearchScreen(
+//                        searchText = searchState.searchText,
+//                        users = searchState.users,
+//                        onSearchTextChange = viewModel::onSearchTextChange
+//                    )
 
 //                    SplashScreen1 {
 //                        this.showMsg("Navigate")

@@ -6,15 +6,22 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -82,97 +89,112 @@ fun DetailsLogin(
     }
     if (isDialog)
         CommonDialog()
-    Column(
+    Column (
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Card(
-            shape = CircleShape
+    )
+    {
+        Column(
+            modifier = Modifier.size(400.dp)
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AsyncImage(
+            Card(
+                shape = CircleShape,
                 modifier = Modifier
-                    .sizeIn(maxWidth = 200.dp, maxHeight = 200.dp)
-                    .clickable {
-                        photoPicker.launch(
-                            PickVisualMediaRequest(
-                                ActivityResultContracts.PickVisualMedia.ImageOnly
+//                    .size(200.dp)
+                    .aspectRatio(1f/1f)
+                    .weight(1f)
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+//                        .size(100.dp)
+//                        .weight(1f)
+                        .fillMaxSize()
+                        .clickable {
+                            photoPicker.launch(
+                                PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                )
                             )
-                        )
-                    },
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(image ?: R.drawable.baseline_account_circle_24) // (imageUri)
-                    .crossfade(enable = true).build(),
-                contentDescription = "Avatar Image",
-                contentScale = ContentScale.Crop,
-            )
-        }
-        Text(
-            text = "Add profile picture",
-            style = MaterialTheme.typography.labelLarge
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = username,
-            onValueChange = {
-                getUserName(it)
-            },
-            label = { Text("Username") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = null,
-                    tint = Color.Gray
+                        },
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(image ?: R.drawable.baseline_account_circle_24) // (imageUri)
+                        .crossfade(enable = true).build(),
+                    contentDescription = "Avatar Image",
+                    contentScale = ContentScale.Crop,
                 )
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
-            ),
-            isError = isError,
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .focusRequester(focusRequester)
-                .onFocusChanged { newFocusState ->
-                    if (newFocusState.isFocused) {
-//                        phoneSelection()
-                    } else {
-                    }
-                }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                focusManager.clearFocus()
-                updateProfile()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors()
-        ) {
+            }
             Text(
-                text = "Let Me In",
-                fontSize = 18.sp,
-                color = Color.White
+                text = "Add profile picture",
+                style = MaterialTheme.typography.labelLarge
             )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = {
+                    getUserName(it)
+                },
+                label = { Text("Username") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                isError = isError,
+                singleLine = true,
+                modifier = Modifier
+//                    .widthIn(max = 400.dp)
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .focusRequester(focusRequester)
+                    .onFocusChanged { newFocusState ->
+                        if (newFocusState.isFocused) {
+//                        phoneSelection()
+                        } else {
+                        }
+                    }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    focusManager.clearFocus()
+                    updateProfile()
+                },
+                modifier = Modifier
+                    .size(width = 250.dp, height = 40.dp),
+                colors = ButtonDefaults.buttonColors()
+            ) {
+                Text(
+                    text = "Let Me In",
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }
 
 @Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 700, heightDp = 350)
 @Composable
 fun DetailsLoginPreview() {
     DetailsLogin(

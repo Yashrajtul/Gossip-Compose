@@ -133,6 +133,7 @@ internal fun ChatInput(
         ) {
             Icon(
                 imageVector = if (textEmpty) Icons.Filled.Mic else Icons.Filled.Send,
+//                imageVector = Icons.Filled.Send,
                 contentDescription = null
             )
         }

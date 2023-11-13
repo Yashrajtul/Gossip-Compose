@@ -30,9 +30,11 @@ fun NavigationGraph(activity: Activity) {
         composable(GossipScreen.SplashScreen.name) {
             val viewModel = hiltViewModel<SplashViewModel>()
             SplashScreen1 {
-                navController.navigate(if (viewModel.isLoggedIn) GossipScreen.Home.name else GossipScreen.Auth.name) {
-                    popUpTo(0)
-                }
+                navController.navigate(
+                    if (viewModel.isLoggedIn && viewModel.usernameEntered) GossipScreen.Home.name
+                    else if (viewModel.isLoggedIn) AuthScreen.DetailEntry.name
+                    else GossipScreen.Auth.name)
+                { popUpTo(0) }
             }
         }
         navigation(
@@ -53,7 +55,7 @@ fun NavigationGraph(activity: Activity) {
                     isError = loginState.isError,
                     isDialog = loginState.isDialog,
                     getPhoneNumber = viewModel::getPhoneNumber,
-                    sendOtp = { viewModel.sendOtp(activity) }
+                    login = { viewModel.login(activity) }
                 )
             }
             composable(AuthScreen.OtpEntry.name) {
@@ -63,9 +65,9 @@ fun NavigationGraph(activity: Activity) {
                     if (loginState.navigate) {
                         viewModel.updateNavigationState()
                         if(loginState.username.isEmpty())
-                            navController.navigate(AuthScreen.DetailEntry.name)
+                            navController.navigate(AuthScreen.DetailEntry.name){ popUpTo(0) }
                         else
-                            navController.navigate(GossipScreen.Home.name)
+                            navController.navigate(GossipScreen.Home.name){ popUpTo(0) }
                     }
                 }
                 OtpScreen(
@@ -87,6 +89,12 @@ fun NavigationGraph(activity: Activity) {
             composable(AuthScreen.DetailEntry.name) {
                 val viewModel = it.sharedViewModel<LoginViewModel>(navController)
                 val loginState by viewModel.loginUiState.collectAsStateWithLifecycle()
+                LaunchedEffect(key1 = loginState.navigate){
+                    if (loginState.navigate){
+                        viewModel.updateNavigationState()
+                        navController.navigate(GossipScreen.Home.name) { popUpTo(0) }
+                    }
+                }
                 DetailsLogin(
                     username = loginState.username,
                     image = loginState.image,
@@ -96,7 +104,6 @@ fun NavigationGraph(activity: Activity) {
                     getImage = viewModel::getImage,
                     updateProfile = {
                         viewModel.updateProfile(activity)
-                        navController.navigate(GossipScreen.Home.name) { popUpTo(0) }
                     }
                 )
             }

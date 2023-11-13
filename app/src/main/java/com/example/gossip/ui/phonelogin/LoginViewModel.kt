@@ -59,8 +59,18 @@ class LoginViewModel @Inject constructor(
     private fun checkError() {
         _loginUiState.update { it.copy(isError = loginUiState.value.phoneNumber.length != 10) }
     }
+    fun login(activity: Activity){
+        _loginUiState.update { it.copy(resend = false) }
+        sendOtp(activity)
+    }
+    fun resendOtp(activity: Activity){
+        _loginUiState.update {
+            it.copy(isButtonEnabled = false, timer = 60L, resend = true)
+        }
+        sendOtp(activity)
+    }
 
-    fun sendOtp(
+    private fun sendOtp(
         activity: Activity
     ) {
         if (!loginUiState.value.resend) checkError()
@@ -74,7 +84,7 @@ class LoginViewModel @Inject constructor(
                 ).collect { it ->
                     when (it) {
                         is ResultState.Success -> {
-                            _loginUiState.update { it.copy(isDialog = false, navigate = true) }
+                            _loginUiState.update { it.copy(isDialog = false, navigate = !loginUiState.value.resend) }
                             activity.showMsg(it.data)
                         }
 
@@ -161,7 +171,7 @@ class LoginViewModel @Inject constructor(
                 .collect { it ->
                     when (it) {
                         is ResultState.Success -> {
-                            _loginUiState.update { it.copy(isDialog = false) }
+                            _loginUiState.update { it.copy(isDialog = false, navigate = true) }
                             activity.showMsg(it.data)
                         }
 
@@ -219,12 +229,7 @@ class LoginViewModel @Inject constructor(
         else
             _loginUiState.update { it.copy(isButtonEnabled = true, timer = timer) }
     }
-    fun resendOtp(activity: Activity){
-        _loginUiState.update {
-            it.copy(isButtonEnabled = false, timer = 60L, resend = true)
-        }
-        sendOtp(activity)
-    }
+
 }
 
 data class LoginState(
