@@ -1,13 +1,15 @@
 package com.example.gossip.model
 
-data class Messages(
+import com.google.firebase.Timestamp
+
+data class ChatMessageModel(
     val message: Message?,
     val key: String? = ""
 ){
     data class Message(
-        val sender: String? = "",
+        val senderId: String? = "",
         val type: String? = "",
         val text: String? = "",
-        val timestamp: Int
+        val timestamp: Timestamp
     )
 }

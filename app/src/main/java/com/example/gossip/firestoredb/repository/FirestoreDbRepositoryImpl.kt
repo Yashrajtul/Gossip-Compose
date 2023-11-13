@@ -1,17 +1,13 @@
 package com.example.gossip.firestoredb.repository
 
 import android.net.Uri
-import com.example.gossip.model.ChatRoom
-import com.example.gossip.model.Messages
 import com.example.gossip.model.UserDataModelResponse
 import com.example.gossip.utils.ResultState
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirestoreDbRepositoryImpl @Inject constructor(

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -61,7 +62,9 @@ fun OtpScreen(
         Image(
             painter = painterResource(id = R.drawable.baseline_password_24),
             contentDescription = "Phone Icon",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier
+                .sizeIn(maxWidth = 200.dp, maxHeight = 200.dp)
+                .fillMaxSize()
         )
 
         Spacer(modifier = Modifier.height(16.dp))

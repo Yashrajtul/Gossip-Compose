@@ -1,8 +1,6 @@
 package com.example.gossip.firestoredb.repository
 
 import android.net.Uri
-import com.example.gossip.model.ChatRoom
-import com.example.gossip.model.Messages
 import com.example.gossip.model.UserDataModelResponse
 import com.example.gossip.utils.ResultState
 import kotlinx.coroutines.flow.Flow

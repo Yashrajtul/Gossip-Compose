@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -93,7 +94,7 @@ fun DetailsLogin(
         ) {
             AsyncImage(
                 modifier = Modifier
-                    .size(200.dp)
+                    .sizeIn(maxWidth = 200.dp, maxHeight = 200.dp)
                     .clickable {
                         photoPicker.launch(
                             PickVisualMediaRequest(

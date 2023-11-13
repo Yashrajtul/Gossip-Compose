@@ -2,7 +2,7 @@ package com.example.gossip.model
 
 import com.google.firebase.Timestamp
 
-data class ChatRoom(
+data class ChatRoomModel(
     val chat: Chat?,
     val key: String? = ""
 ){

@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -63,7 +65,9 @@ fun Login(
         Image(
             painter = painterResource(id = R.drawable.baseline_phone_android_24),
             contentDescription = "Phone Icon",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier
+                .sizeIn(maxWidth = 200.dp, maxHeight = 200.dp)
+                .fillMaxSize()
         )
 
         Spacer(modifier = Modifier.height(16.dp))

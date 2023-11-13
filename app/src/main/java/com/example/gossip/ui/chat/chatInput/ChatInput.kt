@@ -1,6 +1,7 @@
 package com.example.gossip.ui.chat.chatInput
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
@@ -15,10 +16,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Preview(showBackground = true)
+@Preview("dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(device = Devices.PIXEL_C)
 @Composable
 fun ChatInputPreview() {
     ChatInput(onMessageChange = {}, onFocusEvent = {})
