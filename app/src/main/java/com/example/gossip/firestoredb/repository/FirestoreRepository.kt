@@ -26,7 +26,7 @@ interface FirestoreRepository {
     ): Flow<ResultState<Uri>>
 
     fun updateUser(
-        res: UserDataModelResponse
+        res: UserDataModelResponse.User
     ): Flow<ResultState<String>>
 
 }

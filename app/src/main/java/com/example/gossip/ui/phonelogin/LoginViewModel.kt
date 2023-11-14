@@ -14,6 +14,7 @@ import com.example.gossip.utils.ResultState
 import com.example.gossip.utils.showMsg
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ActivityContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +30,8 @@ class LoginViewModel @Inject constructor(
     private val _loginUiState = MutableStateFlow(LoginState())
     val loginUiState: StateFlow<LoginState> = _loginUiState.asStateFlow()
 
-    private  var userId: String by mutableStateOf("")
+    private var userId: String by mutableStateOf("")
+
 
     fun getPhoneNumber(phoneNumber: String) {
         _loginUiState.update {
@@ -42,14 +44,6 @@ class LoginViewModel @Inject constructor(
 
     fun getOtp(otp: String) {
         _loginUiState.update { it.copy(otp = otp, isError = false) }
-    }
-
-    fun getUserName(username: String) {
-        _loginUiState.update { it.copy(username = username) }
-    }
-
-    fun getImage(image: Uri?) {
-        _loginUiState.update { it.copy(image = image) }
     }
 
     fun updateNavigationState(){
@@ -113,11 +107,10 @@ class LoginViewModel @Inject constructor(
                     is ResultState.Success -> {
 //                        _loginUiState.update { it.copy(navigate = true, isError = false) }
                         userId = authRepo.currentUser()
-                        getUserData()
 
+                        getUserData(activity)
                         _loginUiState.update { it.copy(isError = false, isDialog = false) }
 
-                        getProfilePic()
                         activity.showMsg(it.data)
                     }
 
@@ -134,30 +127,23 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun getProfilePic() {
-        viewModelScope.launch {
-            fstoreRepo.getProfilePic(userId)
-                .collect { imageUri ->
-                    when (imageUri) {
-                        is ResultState.Success -> { _loginUiState.update {
-                                it.copy(isDialog = false, image = imageUri.data)
-                            } }
-                        is ResultState.Failure -> { _loginUiState.update { it.copy(isDialog = false) } }
-                        ResultState.Loading -> { _loginUiState.update { it.copy(isDialog = true) } }
-                    }
-                }
-        }
-    }
-
-    private fun getUserData() {
+    private fun getUserData(activity: Activity) {
         viewModelScope.launch {
             fstoreRepo.getUserData(userId)
                 .collect { user ->
                     when (user) {
                         is ResultState.Success -> {
-                            if(user.data != null)
-                                _loginUiState.update { it.copy( username = user.data.username!!) }
-                            _loginUiState.update { it.copy(isDialog = false, navigate = true)}
+                            if(user.data != null) {
+                                _loginUiState.update { it.copy(username = user.data.username!!, phoneNumber = user.data.phone!!, navigate = true, isDialog = false) }
+                            }else{
+                                updateUser(UserDataModelResponse.User(
+                                    username = loginUiState.value.username,
+                                    phone = loginUiState.value.phoneNumber,
+                                    userId = userId,
+                                    createdTimestamp = Timestamp.now()
+                                ), activity)
+                                _loginUiState.update { it.copy(isDialog = false)}
+                            }
                         }
                         is ResultState.Failure -> { _loginUiState.update { it.copy(isDialog = false) } }
                         ResultState.Loading -> { _loginUiState.update { it.copy(isDialog = true) } }
@@ -165,14 +151,15 @@ class LoginViewModel @Inject constructor(
                 }
         }
     }
-    private fun updateUser(user: UserDataModelResponse, activity: Activity) {
+
+    private fun updateUser(user: UserDataModelResponse.User, activity: Activity) {
         viewModelScope.launch {
             fstoreRepo.updateUser(user)
                 .collect { it ->
                     when (it) {
                         is ResultState.Success -> {
                             _loginUiState.update { it.copy(isDialog = false, navigate = true) }
-                            activity.showMsg(it.data)
+//                            activity.showMsg(it.data)
                         }
 
                         is ResultState.Failure -> {
@@ -188,40 +175,43 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun updateProfilePicture(image: Uri) {
-        viewModelScope.launch {
-            fstoreRepo.uploadPic(image, userId)
-                .collect {it->
-                    when (it) {
-                        is ResultState.Success -> { _loginUiState.update { it.copy(isDialog = false) }}
-                        is ResultState.Failure -> { _loginUiState.update { it.copy(isDialog = false) }}
-                        ResultState.Loading -> { _loginUiState.update { it.copy(isDialog = true) }}
-                    }
-                }
-        }
-    }
+//    private fun updateProfilePicture(image: Uri) {
+//        viewModelScope.launch {
+//            fstoreRepo.uploadPic(image, userId)
+//                .collect {it->
+//                    when (it) {
+//                        is ResultState.Success -> { _loginUiState.update { it.copy(isDialog = false) }}
+//                        is ResultState.Failure -> { _loginUiState.update { it.copy(isDialog = false) }}
+//                        ResultState.Loading -> { _loginUiState.update { it.copy(isDialog = true) }}
+//                    }
+//                }
+//        }
+//    }
 
-    fun updateProfile(activity: Activity) {
-        _loginUiState.update {
-            it.copy(isError = loginUiState.value.username.length < 3)
-        }
-        if (loginUiState.value.isError) {
-            activity.showMsg("Username length should be at least 3 chars")
-            return
-        }
-        val user = UserDataModelResponse(
-            user = UserDataModelResponse.User(
-                username = loginUiState.value.username,
-                phone = loginUiState.value.phoneNumber,
-                userId = userId,
-                createdTimestamp = Timestamp.now()
-            ),
-            key = userId
-        )
-        if(loginUiState.value.image != null)
-            updateProfilePicture(loginUiState.value.image!!)
-        updateUser(user, activity)
-    }
+//    fun updateProfile(activity: Activity) {
+//        _loginUiState.update {
+//            it.copy(isError = loginUiState.value.username.length < 3)
+//        }
+//        if (loginUiState.value.isError) {
+//            activity.showMsg("Username length should be at least 3 chars")
+//            return
+//        }
+//        if(loginUiState.value.phoneNumber == ""){
+//            activity.showMsg("No phoneNumber")
+//            return
+//        }
+//
+//        getUserData(activity)
+//        val user = UserDataModelResponse.User(
+//                username = loginUiState.value.username,
+//                phone = loginUiState.value.phoneNumber,
+//                userId = userId,
+//                createdTimestamp = Timestamp.now()
+//            )
+//        if(loginUiState.value.image != null)
+//            updateProfilePicture(loginUiState.value.image!!)
+//        updateUser(user, activity)
+//    }
 
     fun updateTimer(timer: Long){
         if (timer != 0L)
@@ -241,6 +231,7 @@ data class LoginState(
     var isError: Boolean = false,
     var resend: Boolean = false,
     var navigate: Boolean = false,
+//    var isLoggedIn: Boolean = false,
     var image: Uri? = null,
     var timer: Long = 60L
 )

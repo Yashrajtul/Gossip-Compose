@@ -7,6 +7,7 @@ import com.example.gossip.R
 enum class GossipScreen(@StringRes val title: Int) {
     SplashScreen(title = R.string.SplashScreen),
     Auth(title = R.string.Auth),
+    DetailEntry(title = R.string.DetailEntry),
     Home(title = R.string.app_name)
 }
 sealed class HomeScreen(val route: String, @StringRes val title: Int) {

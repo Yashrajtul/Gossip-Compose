@@ -25,13 +25,12 @@ class SplashViewModel @Inject constructor(
                 fstore.getUserData(userId).collect {
                     when (it) {
                         is ResultState.Success -> {
-                            usernameEntered = it.data != null
+                            usernameEntered = it.data?.username != ""
                         }
 
                         else -> {}
                     }
                 }
-
             }
     }
 }

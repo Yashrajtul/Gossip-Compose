@@ -74,7 +74,7 @@ class SettingsViewModel @Inject constructor(
                 }
         }
     }
-    private fun updateUser(user: UserDataModelResponse, activity: Activity) {
+    private fun updateUser(user: UserDataModelResponse.User, activity: Activity) {
         viewModelScope.launch {
             fstoreRepo.updateUser(user)
                 .collect { it ->
@@ -118,15 +118,12 @@ class SettingsViewModel @Inject constructor(
             activity.showMsg("Username length should be at least 3 chars")
             return
         }
-        val user = UserDataModelResponse(
-            user = UserDataModelResponse.User(
+        val user = UserDataModelResponse.User(
                 username = settingUiState.value.username,
                 phone = settingUiState.value.phoneNumber,
                 userId = userId,
                 createdTimestamp = settingUiState.value.createdTimestamp
-            ),
-            key = userId
-        )
+            )
         if(settingUiState.value.image != null)
             updateProfilePicture(settingUiState.value.image!!)
         updateUser(user, activity)

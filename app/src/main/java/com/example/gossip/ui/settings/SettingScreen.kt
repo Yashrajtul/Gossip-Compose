@@ -95,7 +95,7 @@ fun SettingScreen(
         ) {
             AsyncImage(
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(150.dp)
                     .clickable {
                         photoPicker.launch(
                             PickVisualMediaRequest(

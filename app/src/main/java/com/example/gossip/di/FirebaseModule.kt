@@ -36,6 +36,7 @@ object FirebaseModule {
     @Singleton
     fun providesFirebaseStorage():StorageReference = Firebase.storage.reference
 
+
     @Provides
     @Singleton
     fun getChatRoomId(userId1: String, userId2: String): String{

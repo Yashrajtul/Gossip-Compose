@@ -144,12 +144,12 @@ class FirestoreDbRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun updateUser(res: UserDataModelResponse): Flow<ResultState<String>> = callbackFlow {
+    override fun updateUser(res: UserDataModelResponse.User): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
         db.collection("user")
-            .document(res.key!!)
-            .set(res.user!!)
+            .document(res.userId!!)
+            .set(res)
             .addOnCompleteListener {
                 if (it.isSuccessful)
                     trySend(ResultState.Success("User Updated"))
