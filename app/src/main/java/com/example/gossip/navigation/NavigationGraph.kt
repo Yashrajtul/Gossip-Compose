@@ -33,7 +33,7 @@ fun NavigationGraph(activity: Activity) {
             SplashScreen1 {
                 navController.navigate(
                     if (viewModel.isLoggedIn && viewModel.usernameEntered) GossipScreen.Home.name
-                    else if (viewModel.isLoggedIn) AuthScreen.DetailEntry.name
+                    else if (viewModel.isLoggedIn) GossipScreen.DetailEntry.name
                     else GossipScreen.Auth.name
                 )
                 { popUpTo(0) }

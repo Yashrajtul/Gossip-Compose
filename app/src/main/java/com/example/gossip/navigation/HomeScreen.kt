@@ -15,10 +15,10 @@ sealed class HomeScreen(val route: String, @StringRes val title: Int) {
     object Profile : HomeScreen("profile", R.string.OtpEntry)
 //    object Message: HomeScreen("message", R.string.DetailEntry)
 }
-enum class AuthScreen(@StringRes val title: Int, val canNavigateBack: Boolean){
-    PhoneEntry(title = R.string.PhoneEntry, false),
-    OtpEntry(title = R.string.OtpEntry, true),
-    DetailEntry(title = R.string.DetailEntry, true),
+enum class AuthScreen(@StringRes val title: Int){
+    PhoneEntry(title = R.string.PhoneEntry),
+    OtpEntry(title = R.string.OtpEntry),
+//    DetailEntry(title = R.string.DetailEntry),
 }
 
 data class BottomNavigationItem(
