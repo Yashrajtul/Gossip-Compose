@@ -19,10 +19,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object FirebaseModule {
-    @Provides
-    @Singleton
-    fun providesRealtimeDb():DatabaseReference =
-        Firebase.database.reference.child("userchats")
+//    @Provides
+//    @Singleton
+//    fun providesRealtimeDb():DatabaseReference =
+//        Firebase.database.reference.child("userchats")
 
     @Provides
     @Singleton
@@ -36,11 +36,4 @@ object FirebaseModule {
     @Singleton
     fun providesFirebaseStorage():StorageReference = Firebase.storage.reference
 
-
-    @Provides
-    @Singleton
-    fun getChatRoomId(userId1: String, userId2: String): String{
-        return if (userId1.hashCode()<userId2.hashCode()) userId1+"_"+userId2
-        else userId2+"_"+userId1
-    }
 }

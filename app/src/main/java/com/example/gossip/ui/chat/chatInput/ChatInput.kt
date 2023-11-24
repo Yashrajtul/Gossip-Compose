@@ -25,7 +25,14 @@ import androidx.compose.ui.unit.dp
 @Preview(device = Devices.PIXEL_C)
 @Composable
 fun ChatInputPreview() {
-    ChatInput(onMessageChange = {}, onFocusEvent = {})
+    ChatInput(input = TextFieldValue("Yash Tulsyan"), getInput = {}, sendMessage = {}, onFocusEvent = {})
+}
+@Preview(showBackground = true)
+@Preview("dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(device = Devices.PIXEL_C)
+@Composable
+fun ChatInputPreview1() {
+    ChatInput(input = TextFieldValue(), getInput = {}, sendMessage = {}, onFocusEvent = {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,13 +40,15 @@ fun ChatInputPreview() {
 @Composable
 internal fun ChatInput(
     modifier: Modifier = Modifier,
-    onMessageChange: (String) -> Unit,
+    input: TextFieldValue,
+    getInput: (input: TextFieldValue) -> Unit,
+    sendMessage: () -> Unit,
     onFocusEvent: (Boolean) -> Unit
 ) {
 
     val context = LocalContext.current
 
-    var input by remember { mutableStateOf(TextFieldValue("")) }
+//    var input by remember { mutableStateOf(TextFieldValue("")) }
     val textEmpty: Boolean by derivedStateOf { input.text.isEmpty() }
 
 //    val imePaddingValues = rememberInsetsPaddingValues(insets = LocalWindowInsets.current.ime)
@@ -66,12 +75,14 @@ internal fun ChatInput(
 //        Spacer(modifier = Modifier.width(6.dp))
         TextField(
             modifier = Modifier
-                .clip(MaterialTheme.shapes.extraLarge)
-                .weight(1f)
+                .clip(CircleShape)
+                .weight(.5f)
+                .heightIn(min = 50.dp)
+                .padding(0.dp)
                 .focusable(true),
 //                .padding(bottom = MaterialTheme.spacing.extraSmall),
             value = input,
-            onValueChange = { input = it },
+            onValueChange = getInput,
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -91,37 +102,38 @@ internal fun ChatInput(
                     Icon(imageVector = Icons.Filled.Mood, contentDescription = "Mood")
                 }
             },
-            trailingIcon = {
-                Row() {
-                    IconButton(onClick = {
-                        Toast.makeText(
-                            context,
-                            "Attach File Clicked.\n(Not Available)",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }) {
-                        Icon(imageVector = Icons.Filled.AttachFile, contentDescription = "File")
-                    }
-                    IconButton(onClick = {
-                        Toast.makeText(
-                            context,
-                            "Camera Clicked.\n(Not Available)",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }) {
-                        Icon(imageVector = Icons.Filled.CameraAlt, contentDescription = "Camera")
-                    }
-                }
-
-            }
-
+            maxLines = 6,
+//            trailingIcon = {
+//                Row() {
+//                    IconButton(onClick = {
+//                        Toast.makeText(
+//                            context,
+//                            "Attach File Clicked.\n(Not Available)",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }) {
+//                        Icon(imageVector = Icons.Filled.AttachFile, contentDescription = "File")
+//                    }
+//                    IconButton(onClick = {
+//                        Toast.makeText(
+//                            context,
+//                            "Camera Clicked.\n(Not Available)",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }) {
+//                        Icon(imageVector = Icons.Filled.CameraAlt, contentDescription = "Camera")
+//                    }
+//                }
+//
+//            }
         )
+        Spacer(modifier = Modifier.width(4.dp))
         FloatingActionButton(
+            modifier = Modifier.sizeIn(minHeight = 51.dp, minWidth = 51.dp),
             shape = CircleShape,
             onClick = {
                 if (!textEmpty) {
-                    onMessageChange(input.text)
-                    input = TextFieldValue("")
+                    sendMessage()
                 } else {
                     Toast.makeText(
                         context,

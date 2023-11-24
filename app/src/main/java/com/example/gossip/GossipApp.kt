@@ -117,7 +117,7 @@ fun GossipBottomNavigationBar(
 
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun GossipTopAppBarPreview() {
     GossipTopAppBar(title = "GOSSIP", canNavigateBack = true)

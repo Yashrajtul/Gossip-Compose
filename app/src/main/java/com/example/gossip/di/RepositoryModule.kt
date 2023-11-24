@@ -1,11 +1,9 @@
 package com.example.gossip.di
 
-import android.content.ContentProvider
-import com.example.gossip.contentproviders.MyContentProvider
-import com.example.gossip.firebaseRealtimeDb.repository.RealtimeDbRepository
-import com.example.gossip.firebaseRealtimeDb.repository.RealtimeRepository
 import com.example.gossip.firebaseauth.repository.AuthRepository
 import com.example.gossip.firebaseauth.repository.AuthRepositoryImpl
+import com.example.gossip.firestoredb.repository.ChatRepository
+import com.example.gossip.firestoredb.repository.ChatRepositoryImpl
 import com.example.gossip.firestoredb.repository.FirestoreDbRepositoryImpl
 import com.example.gossip.firestoredb.repository.FirestoreRepository
 import dagger.Binds
@@ -17,11 +15,6 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 abstract class RepositoryModule {
     @Binds
-    abstract fun providesRealtimeRepository(
-        repo: RealtimeDbRepository
-    ): RealtimeRepository
-
-    @Binds
     abstract fun providesFirestoreRepository(
         repo: FirestoreDbRepositoryImpl
     ): FirestoreRepository
@@ -30,5 +23,10 @@ abstract class RepositoryModule {
     abstract fun providesFirebaseAuthRepository(
         repo: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    abstract fun providesChatRepository(
+        repo: ChatRepositoryImpl
+    ): ChatRepository
 
 }

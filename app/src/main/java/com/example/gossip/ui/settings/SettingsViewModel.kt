@@ -29,8 +29,8 @@ class SettingsViewModel @Inject constructor(
     private var userId: String = auth.currentUser()
     init {
         if(userId != null) {
-            getProfilePic(userId)
-            getUserData(userId)
+            getProfilePic()
+            getUserData()
         }
     }
     fun getUserName(username: String) {
@@ -44,7 +44,7 @@ class SettingsViewModel @Inject constructor(
     fun signOut(){
         auth.signOut()
     }
-    private fun getProfilePic(userId: String) {
+    private fun getProfilePic() {
         viewModelScope.launch {
             fstoreRepo.getProfilePic(userId)
                 .collect { imageUri ->
@@ -58,7 +58,7 @@ class SettingsViewModel @Inject constructor(
                 }
         }
     }
-    private fun getUserData(userId: String) {
+    private fun getUserData() {
         viewModelScope.launch {
             fstoreRepo.getUserData(userId)
                 .collect { user ->
@@ -66,7 +66,7 @@ class SettingsViewModel @Inject constructor(
                         is ResultState.Success -> {
                             _settingUiState.update { it.copy(isDialog = false)}
                             if(user.data != null)
-                                _settingUiState.update { it.copy( username = user.data.username!!, phoneNumber = user.data.phone!! ) }
+                                _settingUiState.update { it.copy( username = user.data.username!!, phoneNumber = user.data.phone!!, createdTimestamp = user.data.createdTimestamp ) }
                         }
                         is ResultState.Failure -> { _settingUiState.update { it.copy(isDialog = false) } }
                         ResultState.Loading -> { _settingUiState.update { it.copy(isDialog = true) } }

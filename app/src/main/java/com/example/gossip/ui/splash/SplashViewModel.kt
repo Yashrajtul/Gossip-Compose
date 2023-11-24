@@ -6,6 +6,7 @@ import com.example.gossip.firebaseauth.repository.AuthRepository
 import com.example.gossip.firestoredb.repository.FirestoreRepository
 import com.example.gossip.utils.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,6 +32,8 @@ class SplashViewModel @Inject constructor(
                         else -> {}
                     }
                 }
+
             }
+
     }
 }

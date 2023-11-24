@@ -3,15 +3,18 @@ package com.example.gossip
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.gossip.navigation.NavigationGraph
-import com.example.gossip.ui.home.SearchScreen
-import com.example.gossip.ui.home.SearchViewModel
+import com.example.gossip.presentation.chat.ChatScreen
+import com.example.gossip.presentation.username.UsernameScreen
 import com.example.gossip.ui.theme.GossipTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,21 +34,32 @@ class MainActivity : ComponentActivity() {
 
                     NavigationGraph(activity = this)
 
-//                    val viewModel: SearchViewModel by viewModels()
-//                    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
-//                    SearchScreen(
-//                        searchText = searchState.searchText,
-//                        users = searchState.users,
-//                        onSearchTextChange = viewModel::onSearchTextChange
-//                    )
-
-//                    SplashScreen1 {
-//                        this.showMsg("Navigate")
-//                    }
-
+//                    TestNav()
 
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun TestNav() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "username_screen"){
+        composable("username_screen"){
+            UsernameScreen(onNavigate = navController::navigate)
+        }
+        composable(
+            route = "chat_screen/{username}",
+            arguments = listOf(
+                navArgument(name = "username"){
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ){
+            val username = it.arguments?.getString("username")
+            ChatScreen(username = username)
         }
     }
 }

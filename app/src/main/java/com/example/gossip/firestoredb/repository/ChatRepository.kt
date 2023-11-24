@@ -2,23 +2,34 @@ package com.example.gossip.firestoredb.repository
 
 import com.example.gossip.model.ChatRoomModel
 import com.example.gossip.model.ChatMessageModel
+import com.example.gossip.model.UserDataModelResponse
+import com.example.gossip.util.Resource
 import com.example.gossip.utils.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
-    fun createChatRoom(
-        chat: ChatRoomModel
-    ): Flow<ResultState<String>>
+    suspend fun getUserData(
+        key: String
+    ): UserDataModelResponse.User?
 
-    fun getChatRoom(
+    fun updateChatRoom(
+        chatRoom: ChatRoomModel.ChatRoom
+    ): Resource<String>
+
+    suspend fun getChatRoom(
         chatRoomId: String
-    ): Flow<ResultState<ChatRoomModel.Chat?>>
+    ): ChatRoomModel.ChatRoom?
 
-    fun sendMessage(
+    suspend fun sendMessage(
+        chatRoomId: String,
         message: ChatMessageModel.Message
-    ): Flow<ResultState<String>>
+    ): Resource<Unit>
+
+    fun getMessages(
+        chatRoomId: String
+    ): Flow<ResultState<List<ChatMessageModel.Message?>>>
 
     fun deleteMessage(
         key: String
-    ): Flow<ResultState<String>>
+    ): Resource<String>
 }

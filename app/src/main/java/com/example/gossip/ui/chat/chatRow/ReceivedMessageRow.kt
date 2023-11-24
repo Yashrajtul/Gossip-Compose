@@ -37,7 +37,7 @@ fun ReceivedMessageRow(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(
-                start = MaterialTheme.spacing.small,
+                start = MaterialTheme.spacing.medium,
                 end = MaterialTheme.spacing.extraLarge,
                 top = MaterialTheme.spacing.extraSmall,
                 bottom = MaterialTheme.spacing.extraSmall

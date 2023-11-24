@@ -1,4 +1,4 @@
-package com.example.gossip.ui.home
+package com.example.gossip.ui.home.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -38,7 +38,7 @@ fun SentMessageRow(
             .wrapContentHeight()
             .padding(
                 start = MaterialTheme.spacing.extraLarge,
-                end = MaterialTheme.spacing.small,
+                end = MaterialTheme.spacing.medium,
                 top = MaterialTheme.spacing.extraSmall,
                 bottom = MaterialTheme.spacing.extraSmall
             )

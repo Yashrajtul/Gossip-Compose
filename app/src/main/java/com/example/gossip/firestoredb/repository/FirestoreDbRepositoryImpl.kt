@@ -4,10 +4,12 @@ import android.net.Uri
 import com.example.gossip.model.UserDataModelResponse
 import com.example.gossip.utils.ResultState
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirestoreDbRepositoryImpl @Inject constructor(
@@ -76,16 +78,23 @@ class FirestoreDbRepositoryImpl @Inject constructor(
         callbackFlow {
             trySend(ResultState.Loading)
 
-            db.collection("user")
-                .document(key)
-                .get()
-                .addOnSuccessListener { data ->
-                    val user: UserDataModelResponse.User? =
-                        data.toObject(UserDataModelResponse.User::class.java)
-                    trySend(ResultState.Success(user))
-                }.addOnFailureListener {
-                    trySend(ResultState.Failure(it))
-                }
+            try {
+                 val user = db.collection("user")
+                    .document(key)
+                    .get()
+                    .await()
+                    .toObject(UserDataModelResponse.User::class.java)
+                trySend(ResultState.Success(user))
+//                    .addOnSuccessListener { data ->
+//                        val user: UserDataModelResponse.User? =
+//                            data.toObject(UserDataModelResponse.User::class.java)
+//                        trySend(ResultState.Success(user))
+//                    }.addOnFailureListener {
+//                        trySend(ResultState.Failure(it))
+//                    }
+            }catch (e: Exception){
+                trySend(ResultState.Failure(e))
+            }
 
             awaitClose {
                 close()

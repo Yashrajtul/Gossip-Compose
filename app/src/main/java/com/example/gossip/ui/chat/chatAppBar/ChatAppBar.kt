@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -22,7 +23,7 @@ import coil.compose.rememberAsyncImagePainter
 @Preview
 @Composable
 fun ChatAppBarPreview() {
-    ChatAppBar()
+    ChatAppBar(title = "Yash", description = "Hi")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,9 +41,12 @@ fun ChatAppBar(
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     TopAppBar(title = {
-        Row {
+        Row(
+            modifier = Modifier.height(50.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Surface(
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier.size(40.dp),
                 shape = CircleShape,
                 color = Color.LightGray
             ) {
@@ -67,11 +71,11 @@ fun ChatAppBar(
             }
             Column(
                 modifier = Modifier
-                    .padding(start = 4.dp)
+                    .padding(start = 8.dp)
                     .clickable {
                         onUserNameClick?.invoke()
                     },
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = title,
@@ -80,17 +84,17 @@ fun ChatAppBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                if (description != "")
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
             }
         }
     },
-        modifier = Modifier.statusBarsPadding(),
-//        modifier = Modifier.align(Alignment.CenterStart),
+        modifier = Modifier.height(50.dp),
         navigationIcon = {
             IconButton(onClick = { onBackArrowClick?.invoke() }) {
                 Icon(
@@ -100,26 +104,26 @@ fun ChatAppBar(
             }
         },
         actions = {
-            IconButton(
-                onClick = {
-                    Toast.makeText(
-                        context,
-                        "Videochat Clicked.\n(Not Available)",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }) {
-                Icon(imageVector = Icons.Filled.VideoCall, contentDescription = null)
-            }
-            IconButton(
-                onClick = {
-                    Toast.makeText(
-                        context,
-                        "Voicechat Clicked.\n(Not Available)",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }) {
-                Icon(imageVector = Icons.Filled.Call, contentDescription = null)
-            }
+//            IconButton(
+//                onClick = {
+//                    Toast.makeText(
+//                        context,
+//                        "Videochat Clicked.\n(Not Available)",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }) {
+//                Icon(imageVector = Icons.Filled.VideoCall, contentDescription = null)
+//            }
+//            IconButton(
+//                onClick = {
+//                    Toast.makeText(
+//                        context,
+//                        "Voicechat Clicked.\n(Not Available)",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }) {
+//                Icon(imageVector = Icons.Filled.Call, contentDescription = null)
+//            }
             IconButton(
                 onClick = {
                     expanded = true

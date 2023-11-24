@@ -1,5 +1,6 @@
-package com.example.gossip.ui.home
+package com.example.gossip.ui.home.search
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,11 +21,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import com.example.gossip.R
 import com.example.gossip.model.UserDataModelResponse
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +30,8 @@ import com.example.gossip.model.UserDataModelResponse
 fun SearchScreen(
     searchText: String,
     users: List<UserDataModelResponse.User>,
-    onSearchTextChange: (searchText: String) -> Unit
+    onSearchTextChange: (searchText: String) -> Unit,
+    onClick: (userId: String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -60,14 +58,17 @@ fun SearchScreen(
 //                        .fillMaxWidth()
 //                        .padding(16.dp)
 //                )
-                SearchItem(user = user)
+                SearchItem(user = user, onClick = onClick)
             }
         }
     }
 }
 
 @Composable
-fun SearchItem(user: UserDataModelResponse.User) {
+fun SearchItem(
+    user: UserDataModelResponse.User,
+    onClick: (userId: String) -> Unit
+    ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -79,6 +80,7 @@ fun SearchItem(user: UserDataModelResponse.User) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
+                .clickable { onClick(user.userId!!) }
         ) {
             Row (
                 verticalAlignment = Alignment.CenterVertically,
@@ -110,5 +112,11 @@ fun SearchItem(user: UserDataModelResponse.User) {
 @Preview(showBackground = true)
 @Composable
 fun SearchItemPreview() {
-    SearchItem(user = UserDataModelResponse.User("Yash", "1234567890"))
+    SearchItem(
+        user = UserDataModelResponse.User(
+            "Yash",
+            "1234567890"
+        ),
+        onClick = {}
+    )
 }

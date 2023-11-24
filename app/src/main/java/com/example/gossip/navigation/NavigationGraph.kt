@@ -2,18 +2,29 @@ package com.example.gossip.navigation
 
 import android.app.Activity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.gossip.ui.chat.ChatScreenContent
+import com.example.gossip.ui.chat.ChatScreenViewModel
+import com.example.gossip.ui.home.search.SearchScreen
+import com.example.gossip.ui.home.search.SearchViewModel
 import com.example.gossip.ui.splash.SplashScreen1
 import com.example.gossip.ui.phonelogin.DetailsLogin
 import com.example.gossip.ui.phonelogin.DetailsLoginViewModel
@@ -23,7 +34,10 @@ import com.example.gossip.ui.phonelogin.OtpScreen
 import com.example.gossip.ui.settings.SettingScreen
 import com.example.gossip.ui.settings.SettingsViewModel
 import com.example.gossip.ui.splash.SplashViewModel
+import com.example.gossip.utils.showMsg
+import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NavigationGraph(activity: Activity) {
     val navController = rememberNavController()
@@ -115,11 +129,70 @@ fun NavigationGraph(activity: Activity) {
             )
         }
         navigation(
-            startDestination = HomeScreen.Profile.route,
+            startDestination = "search",
             route = GossipScreen.Home.name
         ) {
             composable(HomeScreen.Chat.route) {
 
+            }
+            composable(route = "search") {
+                val viewModel = hiltViewModel<SearchViewModel>()
+                val searchState by viewModel.searchState.collectAsStateWithLifecycle()
+                SearchScreen(
+                    searchText = searchState.searchText,
+                    users = searchState.users,
+                    onSearchTextChange = viewModel::onSearchTextChange,
+                    onClick = {
+                        navController.navigate("chatroom/$it")
+                    }
+                )
+            }
+            composable(
+                route = "chatroom/{userId}",
+                arguments = listOf(
+                    navArgument(name = "userId"){
+                        type = NavType.StringType
+                        defaultValue = ""
+                    }
+                )
+            ){entry->
+                val userId = entry.arguments?.getString("userId")!!
+                val viewModel = hiltViewModel<ChatScreenViewModel>()
+                LaunchedEffect(key1 = true) {
+                    viewModel.toastEvent.collectLatest { message ->
+                        activity.showMsg(message)
+                    }
+                }
+                val lifecycleOwner = LocalLifecycleOwner.current
+                DisposableEffect(key1 = lifecycleOwner) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_START) {
+                            viewModel.getChatRoom(userId)
+                        } else if (event == Lifecycle.Event.ON_STOP) {
+                            viewModel.disconnect()
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
+                }
+//                LaunchedEffect(key1 = userId){
+//                    viewModel.getChatRoom(userId)
+//                }
+//                viewModel.updateMessages()
+                val chatState by viewModel.chatState.collectAsStateWithLifecycle()
+                ChatScreenContent(
+                    name = chatState.name,
+                    input = chatState.messageInput,
+                    messages = chatState.messages,
+                    messages1 = chatState.messages1,
+                    keyboardController = null,
+                    getInput = viewModel::onMessageChange,
+                    sendMessage = viewModel::sendMessage1,
+                    isChatInputFocus = {},
+                    navigateUp = {navController.navigateUp()}
+                )
             }
             composable(HomeScreen.Profile.route) {
                 val viewModel = hiltViewModel<SettingsViewModel>()
