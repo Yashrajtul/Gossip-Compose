@@ -13,8 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gossip.navigation.NavigationGraph
-import com.example.gossip.presentation.chat.ChatScreen
-import com.example.gossip.presentation.username.UsernameScreen
 import com.example.gossip.ui.theme.GossipTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,7 +32,6 @@ class MainActivity : ComponentActivity() {
 
                     NavigationGraph(activity = this)
 
-//                    TestNav()
 
                 }
             }
@@ -42,24 +39,24 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun TestNav() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "username_screen"){
-        composable("username_screen"){
-            UsernameScreen(onNavigate = navController::navigate)
-        }
-        composable(
-            route = "chat_screen/{username}",
-            arguments = listOf(
-                navArgument(name = "username"){
-                    type = NavType.StringType
-                    nullable = true
-                }
-            )
-        ){
-            val username = it.arguments?.getString("username")
-            ChatScreen(username = username)
-        }
-    }
-}
+//@Composable
+//fun TestNav() {
+//    val navController = rememberNavController()
+//    NavHost(navController = navController, startDestination = "username_screen"){
+//        composable("username_screen"){
+//            UsernameScreen(onNavigate = navController::navigate)
+//        }
+//        composable(
+//            route = "chat_screen/{username}",
+//            arguments = listOf(
+//                navArgument(name = "username"){
+//                    type = NavType.StringType
+//                    nullable = true
+//                }
+//            )
+//        ){
+//            val username = it.arguments?.getString("username")
+//            ChatScreen(username = username)
+//        }
+//    }
+//}

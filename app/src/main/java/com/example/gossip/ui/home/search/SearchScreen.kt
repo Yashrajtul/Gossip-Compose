@@ -11,16 +11,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gossip.model.UserDataModelResponse
@@ -42,8 +50,26 @@ fun SearchScreen(
             value = searchText,
             onValueChange = { onSearchTextChange(it) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Search") }
-
+            placeholder = { Text(text = "Search") },
+            shape = CircleShape,
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            singleLine = true,
+            leadingIcon = {
+                Icon(imageVector = Icons.Filled.Search, contentDescription = "Search")
+            },
+            trailingIcon = {
+                if(searchText.isNotBlank()) {
+                    IconButton(onClick = {
+                        onSearchTextChange("")
+                    }) {
+                        Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
+                    }
+                }
+            }
         )
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(
@@ -117,6 +143,26 @@ fun SearchItemPreview() {
             "Yash",
             "1234567890"
         ),
+        onClick = {}
+    )
+}
+@Preview(showBackground = true)
+@Composable
+fun SearchScreenPreview() {
+    SearchScreen(
+        searchText = "yas",
+        users = listOf(
+            UserDataModelResponse.User(
+                "Yash",
+                "1234567890"
+            ),
+            UserDataModelResponse.User(
+                "Yash1",
+                "1234567987"
+            ),
+
+        ),
+        onSearchTextChange = {},
         onClick = {}
     )
 }
