@@ -6,6 +6,8 @@ import com.example.gossip.firestoredb.repository.ChatRepository
 import com.example.gossip.firestoredb.repository.ChatRepositoryImpl
 import com.example.gossip.firestoredb.repository.FirestoreDbRepositoryImpl
 import com.example.gossip.firestoredb.repository.FirestoreRepository
+import com.example.gossip.firestoredb.repository.HomeRepository
+import com.example.gossip.firestoredb.repository.HomeRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -28,5 +30,10 @@ abstract class RepositoryModule {
     abstract fun providesChatRepository(
         repo: ChatRepositoryImpl
     ): ChatRepository
+
+    @Binds
+    abstract fun providesHomeRepository(
+        repo: HomeRepositoryImpl
+    ): HomeRepository
 
 }

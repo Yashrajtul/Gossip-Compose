@@ -7,12 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.gossip.firebaseauth.repository.AuthRepository
 import com.example.gossip.firestoredb.repository.FirestoreRepository
 import com.example.gossip.model.UserDataModelResponse
+import com.example.gossip.util.Resource
 import com.example.gossip.utils.ResultState
 import com.example.gossip.utils.showMsg
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,9 +29,12 @@ class SettingsViewModel @Inject constructor(
     private val _settingUiState = MutableStateFlow(SettingsState())
     val settingUiState: StateFlow<SettingsState> = _settingUiState.asStateFlow()
 
+    private val _toastEvent = MutableSharedFlow<String>()
+    val toastEvent = _toastEvent.asSharedFlow()
+
     private var userId: String = auth.currentUser()
     init {
-        if(userId != null) {
+        if(userId != "") {
             getProfilePic()
             getUserData()
         }
@@ -46,16 +52,17 @@ class SettingsViewModel @Inject constructor(
     }
     private fun getProfilePic() {
         viewModelScope.launch {
-            fstoreRepo.getProfilePic(userId)
-                .collect { imageUri ->
-                    when (imageUri) {
-                        is ResultState.Success -> { _settingUiState.update {
-                            it.copy(isDialog = false, image = imageUri.data)
-                        } }
-                        is ResultState.Failure -> { _settingUiState.update { it.copy(isDialog = false) } }
-                        ResultState.Loading -> { _settingUiState.update { it.copy(isDialog = true) } }
+            val result = fstoreRepo.getProfilePic(userId)
+            when (result){
+                is Resource.Success -> {
+                    _settingUiState.update {
+                        it.copy(isDialog = false, image = result.data)
                     }
                 }
+                is Resource.Error -> {
+                    _toastEvent.emit(result.message ?: "Unknown error")
+                }
+            }
         }
     }
     private fun getUserData() {

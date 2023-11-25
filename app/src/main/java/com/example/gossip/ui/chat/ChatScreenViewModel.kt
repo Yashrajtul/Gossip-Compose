@@ -116,79 +116,80 @@ class ChatScreenViewModel @Inject constructor(
         }
     }
 
-    fun sendMessage() {
-        val message = chatState.value.messageInput.text.trim()
-        viewModelScope.launch {
-//            _chatState.update {
-//                it.copy(
-//                    chatRoom = ChatRoomModel.ChatRoom(
-//                        members = _chatState.value.chatRoom.members,
-//                        chatRoomId = _chatState.value.chatRoom.chatRoomId,
-//                        lastMessageSenderId = myUserId,
-//                        lastUpdated = Timestamp.now()
+//    fun sendMessage() {
+//        val message = chatState.value.messageInput.text.trim()
+//        viewModelScope.launch {
+////            _chatState.update {
+////                it.copy(
+////                    chatRoom = ChatRoomModel.ChatRoom(
+////                        members = _chatState.value.chatRoom.members,
+////                        chatRoomId = _chatState.value.chatRoom.chatRoomId,
+////                        lastMessageSenderId = myUserId,
+////                        lastUpdated = Timestamp.now()
+////                    )
+////                )
+////            }
+//            room = ChatRoomModel.ChatRoom(
+//                members = room.members,
+//                chatRoomId = room.chatRoomId,
+//                lastMessageSenderId = myUserId,
+//                lastMessage = message,
+//                lastUpdated = Timestamp.now()
+//            )
+////            chatRepo.updateChatRoom(chatState.value.chatRoom)
+//            val result = chatRepo.updateChatRoom(room)
+//            when (result) {
+//                is Resource.Success -> {
+//                    val chat = ChatMessageModel.Message(
+//                        senderId = myUserId,
+//                        type = MessageType.TEXT.name,
+//                        messageContent = message,
+//                        status = MessageStatus.RECEIVED.name,
+//                        timestamp = room.lastUpdated
 //                    )
-//                )
+//                    val result = chatRepo.sendMessage(room.chatRoomId, chat)
+//                    when (result) {
+//                        is Resource.Success -> {
+//                            _chatState.update { it.copy(messageInput = TextFieldValue()) }
+//                            updateMessages()
+//                        }
+//
+//                        is Resource.Error -> {}
+//                    }
+//                }
+//
+//                is Resource.Error -> {
+//                    _toastEvent.emit(result.message ?: "Unknown error")
+//                }
 //            }
-            room = ChatRoomModel.ChatRoom(
-                members = room.members,
-                chatRoomId = room.chatRoomId,
-                lastMessageSenderId = myUserId,
-                lastUpdated = Timestamp.now()
-            )
-//            chatRepo.updateChatRoom(chatState.value.chatRoom)
-            val result = chatRepo.updateChatRoom(room)
-            when (result) {
-                is Resource.Success -> {
-                    val chat = ChatMessageModel.Message(
-                        senderId = myUserId,
-                        type = MessageType.TEXT.name,
-                        messageContent = message,
-                        status = MessageStatus.RECEIVED.name,
-                        timestamp = room.lastUpdated
-                    )
-                    val result = chatRepo.sendMessage(room.chatRoomId, chat)
-                    when (result) {
-                        is Resource.Success -> {
-                            _chatState.update { it.copy(messageInput = TextFieldValue()) }
-                            updateMessages()
-                        }
+//
+//        }
+//    }
 
-                        is Resource.Error -> {}
-                    }
-                }
-
-                is Resource.Error -> {
-                    _toastEvent.emit(result.message ?: "Unknown error")
-                }
-            }
-
-        }
-    }
-
-    private fun updateMessages() {
-        viewModelScope.launch {
-            chatRepo.getMessages(room.chatRoomId)
-                .collect { messages ->
-                    when (messages) {
-                        is ResultState.Success -> {
-                            _chatState.update {
-                                it.copy(
-                                    messages = messages.data.map { message ->
-                                        MessageRegister(
-                                            chatMessage = message!!,
-                                            isMessageFromOpponent = message.senderId != myUserId
-                                        )
-                                    }
-                                )
-                            }
-                        }
-
-                        is ResultState.Failure -> {}
-                        ResultState.Loading -> {}
-                    }
-                }
-        }
-    }
+//    private fun updateMessages() {
+//        viewModelScope.launch {
+//            chatRepo.getMessages(room.chatRoomId)
+//                .collect { messages ->
+//                    when (messages) {
+//                        is ResultState.Success -> {
+//                            _chatState.update {
+//                                it.copy(
+//                                    messages = messages.data.map { message ->
+//                                        MessageRegister(
+//                                            chatMessage = message!!,
+//                                            isMessageFromOpponent = message.senderId != myUserId
+//                                        )
+//                                    }
+//                                )
+//                            }
+//                        }
+//
+//                        is ResultState.Failure -> {}
+//                        ResultState.Loading -> {}
+//                    }
+//                }
+//        }
+//    }
 
     fun sendMessage1() {
         viewModelScope.launch {
@@ -200,6 +201,7 @@ class ChatScreenViewModel @Inject constructor(
                     members = room.members,
                     chatRoomId = room.chatRoomId,
                     lastMessageSenderId = myUserId,
+                    lastMessage = message,
                     lastUpdated = Timestamp.now()
                 )
                 chatRepo.updateChatRoom(room)

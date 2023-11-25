@@ -2,6 +2,7 @@ package com.example.gossip.firestoredb.repository
 
 import android.net.Uri
 import com.example.gossip.model.UserDataModelResponse
+import com.example.gossip.util.Resource
 import com.example.gossip.utils.ResultState
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -47,17 +48,6 @@ class FirestoreDbRepositoryImpl @Inject constructor(
                     .addOnSuccessListener {
                         val users: List<UserDataModelResponse.User> =
                             it.toObjects(UserDataModelResponse.User::class.java)
-//                val items = it.map { data ->
-//                    UserDataModelResponse(
-//                        user = UserDataModelResponse.User(
-//                            username = data["username"] as String?,
-//                            phone = data["phone"] as String?,
-//                            userId = data["userId"] as String?,
-//                            createdTimestamp = data["createdTimestamp"] as Timestamp
-//                        ),
-//                        key = data.id
-//                    )
-//                }
                         trySend(ResultState.Success(users))
                     }.addOnFailureListener {
                         trySend(ResultState.Failure(it))
@@ -137,19 +127,15 @@ class FirestoreDbRepositoryImpl @Inject constructor(
             }
         }
 
-    override fun getProfilePic(key: String): Flow<ResultState<Uri>> = callbackFlow {
-        trySend(ResultState.Loading)
-
-        storage.child("profilePictures")
-            .child(key)
-            .downloadUrl
-            .addOnSuccessListener {
-                trySend(ResultState.Success(it))
-            }.addOnFailureListener {
-                trySend(ResultState.Failure(it))
-            }
-        awaitClose {
-            close()
+    override suspend fun getProfilePic(key: String): Resource<Uri> {
+        return try {
+            val image = storage.child("profilePictures")
+                .child(key)
+                .downloadUrl
+                .await()
+            Resource.Success(image)
+        }catch (e: Exception){
+            Resource.Error(e.localizedMessage?: "Unknown Error")
         }
     }
 

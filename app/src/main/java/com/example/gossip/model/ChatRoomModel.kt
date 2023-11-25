@@ -10,6 +10,7 @@ data class ChatRoomModel(
         val members: List<String> = emptyList(),
         val chatRoomId: String = "",
         val lastMessageSenderId: String = "",
+        val lastMessage: String = "",
         val lastUpdated: Timestamp = Timestamp.now()
     )
 }

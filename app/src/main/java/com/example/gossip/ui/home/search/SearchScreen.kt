@@ -1,9 +1,11 @@
 package com.example.gossip.ui.home.search
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -25,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,53 +43,81 @@ fun SearchScreen(
     searchText: String,
     users: List<UserDataModelResponse.User>,
     onSearchTextChange: (searchText: String) -> Unit,
+    onBackArrowClick: (() -> Unit)? = null,
     onClick: (userId: String) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
-        TextField(
-            value = searchText,
-            onValueChange = { onSearchTextChange(it) },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Search") },
-            shape = CircleShape,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            singleLine = true,
-            leadingIcon = {
-                Icon(imageVector = Icons.Filled.Search, contentDescription = "Search")
+        TopAppBar(
+            title = {
+                Row(
+                    modifier = Modifier.height(50.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Search User")
+                }
             },
-            trailingIcon = {
-                if(searchText.isNotBlank()) {
-                    IconButton(onClick = {
-                        onSearchTextChange("")
-                    }) {
-                        Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
+            navigationIcon = {
+                IconButton(onClick = { onBackArrowClick?.invoke() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Localized description"
+                    )
+                }
+            },
+            modifier = Modifier.height(50.dp)
+        )
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
+            TextField(
+                value = searchText,
+                onValueChange = { onSearchTextChange(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(0.dp),
+                placeholder = { Text(text = "Search") },
+                shape = CircleShape,
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                singleLine = true,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Filled.Search, contentDescription = "Search")
+                },
+                trailingIcon = {
+                    if (searchText.isNotBlank()) {
+                        IconButton(onClick = {
+                            onSearchTextChange("")
+                        }) {
+                            Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
+                        }
                     }
                 }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                items(users) { user ->
+                    //                Text(
+                    //                    text = user.username!!,
+                    //                    modifier = Modifier
+                    //                        .fillMaxWidth()
+                    //                        .padding(16.dp)
+                    //                )
+                    SearchItem(user = user, onClick = onClick)
+                }
             }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            items(users) { user ->
-//                Text(
-//                    text = user.username!!,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(16.dp)
-//                )
-                SearchItem(user = user, onClick = onClick)
-            }
+
         }
     }
 }
@@ -94,11 +126,11 @@ fun SearchScreen(
 fun SearchItem(
     user: UserDataModelResponse.User,
     onClick: (userId: String) -> Unit
-    ) {
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(horizontal = 6.dp, vertical = 4.dp)
     ) {
         Card(
             shape = RoundedCornerShape(8.dp),
@@ -108,10 +140,10 @@ fun SearchItem(
                 .height(48.dp)
                 .clickable { onClick(user.userId!!) }
         ) {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxSize()
-            ){
+            ) {
 //                Spacer(modifier = Modifier.width(4.dp))
 //                AsyncImage(
 //                    model = R.drawable.baseline_account_circle_24,
@@ -146,11 +178,12 @@ fun SearchItemPreview() {
         onClick = {}
     )
 }
+
 @Preview(showBackground = true)
 @Composable
 fun SearchScreenPreview() {
     SearchScreen(
-        searchText = "yas",
+        searchText = "Yas",
         users = listOf(
             UserDataModelResponse.User(
                 "Yash",
@@ -161,7 +194,7 @@ fun SearchScreenPreview() {
                 "1234567987"
             ),
 
-        ),
+            ),
         onSearchTextChange = {},
         onClick = {}
     )

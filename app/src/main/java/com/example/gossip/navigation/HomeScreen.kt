@@ -11,8 +11,9 @@ enum class GossipScreen(@StringRes val title: Int) {
     Home(title = R.string.app_name)
 }
 sealed class HomeScreen(val route: String, @StringRes val title: Int) {
+    object Home : HomeScreen("home", R.string.Home)
     object Chat : HomeScreen("chat", R.string.Chat)
-    object Profile : HomeScreen("profile", R.string.OtpEntry)
+    object Profile : HomeScreen("profile", R.string.Profile)
 //    object Message: HomeScreen("message", R.string.DetailEntry)
 }
 enum class AuthScreen(@StringRes val title: Int){

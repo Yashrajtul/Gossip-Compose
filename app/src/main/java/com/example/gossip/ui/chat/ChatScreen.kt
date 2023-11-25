@@ -102,7 +102,7 @@ fun ChatScreenContent(
         ) {
             items(messages) { message ->
                 val sdf = remember {
-                    SimpleDateFormat("hh:mm a".lowercase(), Locale.ROOT)
+                    SimpleDateFormat("hh:mm a", Locale.ROOT)
                 }
 
                 when (message.isMessageFromOpponent) {
@@ -113,7 +113,7 @@ fun ChatScreenContent(
                             messageTime = sdf.format(
                                 message.chatMessage.timestamp.toDate().time
                                     ?: ""
-                            )
+                            ).lowercase()
                         )
                     }
 
@@ -123,7 +123,7 @@ fun ChatScreenContent(
                             messageTime =sdf.format(
                                 message.chatMessage.timestamp.toDate().time
                                     ?: ""
-                            ),
+                            ).lowercase(),
                             messageStatus = MessageStatus.PENDING
                         )
                     }

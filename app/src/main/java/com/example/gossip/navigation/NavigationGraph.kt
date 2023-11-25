@@ -23,6 +23,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gossip.ui.chat.ChatScreenContent
 import com.example.gossip.ui.chat.ChatScreenViewModel
+import com.example.gossip.ui.home.HomeScreen
+import com.example.gossip.ui.home.HomeScreensViewModel
 import com.example.gossip.ui.home.search.SearchScreen
 import com.example.gossip.ui.home.search.SearchViewModel
 import com.example.gossip.ui.splash.SplashScreen1
@@ -129,11 +131,41 @@ fun NavigationGraph(activity: Activity) {
             )
         }
         navigation(
-            startDestination = "search",
+            startDestination = HomeScreen.Home.route,  //"search",
             route = GossipScreen.Home.name
         ) {
-            composable(HomeScreen.Chat.route) {
-
+            composable(HomeScreen.Home.route) {
+                val viewModel = hiltViewModel<HomeScreensViewModel>()
+                val homeState by viewModel.homeState.collectAsStateWithLifecycle()
+                val lifecycleOwner = LocalLifecycleOwner.current
+                LaunchedEffect(key1 = true) {
+                    viewModel.toastEvent.collectLatest { message ->
+                        activity.showMsg(message)
+                    }
+                }
+                DisposableEffect(key1 = lifecycleOwner) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_START) {
+                            viewModel.getChatRooms()
+                        }
+//                        else if (event == Lifecycle.Event.ON_STOP) {
+//                            viewModel.disconnect()
+//                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
+                }
+                HomeScreen(
+                    chatUsers = homeState.chatUsers,
+                    myUserId = viewModel.myUserId,
+                    settings = { navController.navigate(HomeScreen.Profile.route) },
+                    search = { navController.navigate("search") },
+                    navigate = {
+                        navController.navigate("chatroom/$it")
+                    }
+                )
             }
             composable(route = "search") {
                 val viewModel = hiltViewModel<SearchViewModel>()
@@ -142,6 +174,7 @@ fun NavigationGraph(activity: Activity) {
                     searchText = searchState.searchText,
                     users = searchState.users,
                     onSearchTextChange = viewModel::onSearchTextChange,
+                    onBackArrowClick = navController::navigateUp,
                     onClick = {
                         navController.navigate("chatroom/$it")
                     }
@@ -209,6 +242,7 @@ fun NavigationGraph(activity: Activity) {
                         viewModel.signOut()
                         navController.navigate(GossipScreen.SplashScreen.name) { popUpTo(0) }
                     },
+                    onBackArrowClick = navController::navigateUp,
                     updateProfile = {
                         viewModel.updateProfile(activity)
                     }

@@ -2,6 +2,7 @@ package com.example.gossip.firestoredb.repository
 
 import android.net.Uri
 import com.example.gossip.model.UserDataModelResponse
+import com.example.gossip.util.Resource
 import com.example.gossip.utils.ResultState
 import kotlinx.coroutines.flow.Flow
 
@@ -21,9 +22,9 @@ interface FirestoreRepository {
         key: String
     ): Flow<ResultState<String>>
 
-    fun getProfilePic(
+    suspend fun getProfilePic(
         key: String
-    ): Flow<ResultState<Uri>>
+    ): Resource<Uri>
 
     fun updateUser(
         res: UserDataModelResponse.User

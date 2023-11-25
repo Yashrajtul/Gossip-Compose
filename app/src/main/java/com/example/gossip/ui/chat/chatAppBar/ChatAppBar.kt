@@ -94,7 +94,7 @@ fun ChatAppBar(
             }
         }
     },
-        modifier = Modifier.height(50.dp),
+        modifier = modifier.height(50.dp),
         navigationIcon = {
             IconButton(onClick = { onBackArrowClick?.invoke() }) {
                 Icon(
